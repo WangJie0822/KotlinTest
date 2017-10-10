@@ -1,6 +1,6 @@
 package com.wj.kotlintest.dagger.sub.activity
 
-import com.wj.kotlintest.MainActivity
+import com.wj.kotlintest.activity.MainActivity
 
 import dagger.Subcomponent
 import dagger.android.AndroidInjector

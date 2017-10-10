@@ -2,7 +2,7 @@ package com.wj.kotlintest.dagger.module
 
 import android.app.Activity
 
-import com.wj.kotlintest.MainActivity
+import com.wj.kotlintest.activity.MainActivity
 import com.wj.kotlintest.dagger.sub.activity.MainActivitySub
 
 import dagger.Binds
