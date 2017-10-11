@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/KotlinTest.iml" filepath="$PROJECT_DIR$/KotlinTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SwipToLoad/SwipToLoad.iml" filepath="$PROJECT_DIR$/SwipToLoad/SwipToLoad.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

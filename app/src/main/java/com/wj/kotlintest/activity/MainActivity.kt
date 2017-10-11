@@ -1,9 +1,10 @@
 package com.wj.kotlintest.activity
 
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.widget.TextView
 import com.wj.kotlintest.R
+import com.wj.kotlintest.databinding.ActivityMainBinding
 import com.wj.kotlintest.test.TestA
 import dagger.android.AndroidInjection
 import javax.inject.Inject
@@ -16,9 +17,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        val binding: ActivityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
 
-        val tv = findViewById<TextView>(R.id.tv)
-        tv.text = testA.toString()
+        binding.tv.text = testA.toString()
+
     }
 }
