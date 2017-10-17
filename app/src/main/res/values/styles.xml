@@ -1,11 +1,23 @@
 <resources>
 
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+    <!-- 默认主题，没有标题栏 -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <!-- 全屏，没有标题栏、状态栏 -->
+    <style name="AppTheme.FullScreen">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <!-- 闪屏界面主题，默认背景 -->
+    <style name="SplashTheme" parent="AppTheme.FullScreen">
+        <item name="android:windowBackground">@mipmap/data_loading1</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
 </resources>

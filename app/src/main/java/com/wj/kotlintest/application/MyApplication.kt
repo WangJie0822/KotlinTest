@@ -1,5 +1,6 @@
 package com.wj.kotlintest.application
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
 import com.wj.kotlintest.dagger.sub.application.DaggerApplicationSub
@@ -15,11 +16,18 @@ import javax.inject.Inject
  */
 class MyApplication: Application(), HasActivityInjector{
 
+    companion object {
+        @SuppressLint("StaticFieldLeak")
+        lateinit var INSTANCE: Application
+    }
+
     @Inject
     lateinit var activityInjector: DispatchingAndroidInjector<Activity>
 
     override fun onCreate() {
         super.onCreate()
+
+        INSTANCE = this
 
         DaggerApplicationSub
                 .builder()

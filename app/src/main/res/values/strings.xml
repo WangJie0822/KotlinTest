@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">KotlinTest</string>
+
+    <string name="no_data">暂无数据</string>
+    <string name="net_error">网络出现问题，请稍后再试！</string>
+    <string name="net_not_available">网络未连接，请稍后再试！</string>
+    <string name="load_fail">获取数据失败\n点击屏幕重新尝试</string>
 </resources>
