@@ -10,9 +10,6 @@ import javax.inject.Inject
 
 class MainActivity : BaseActivity<ActivityMainBinding>() {
 
-    override fun initTitleBar() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 
     @Inject
     lateinit var testA: TestA
