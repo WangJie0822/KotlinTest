@@ -34,6 +34,7 @@ class AppManager private constructor() {
     fun removeActivity(activity: AppCompatActivity) {
         if (activityStack.contains(activity)) {
             activityStack.remove(activity)
+            Log.w("AppManager---->>", "remove---->>$activity size---->>${activityStack.size}")
         }
     }
 }

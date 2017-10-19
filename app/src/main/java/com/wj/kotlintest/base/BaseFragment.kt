@@ -4,29 +4,30 @@ import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
 import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
-import android.support.annotation.ColorRes
 import android.support.annotation.DrawableRes
+import android.support.annotation.LayoutRes
 import android.support.annotation.StringRes
-import android.support.v7.app.AppCompatActivity
+import android.support.v4.app.FragmentActivity
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import com.wj.kotlintest.R
 import com.wj.kotlintest.databinding.LayoutBaseBinding
 import com.wj.kotlintest.databinding.RootHandler
-import com.wj.kotlintest.utils.AppManager
-import com.wj.kotlintest.utils.statusbar.StatusBarUtil
-import dagger.android.AndroidInjection
+import dagger.android.support.DaggerFragment
 import javax.inject.Inject
 
 /**
- * Activity 基类
+ * Fragment基类
  */
-abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
-    : AppCompatActivity(),
+abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
+    : DaggerFragment(),
         BaseMVPView,
         RootHandler.OnTitleClickListener {
 
     /** 当前界面 Context 对象*/
-    protected lateinit var mContext: AppCompatActivity
+    protected lateinit var mContext: FragmentActivity
 
     /** 当前界面 Presenter 对象 */
     @Inject
@@ -38,18 +39,21 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     protected lateinit var mBinding: DB
 
     /**
-     * 重写 onCreate() 方法，添加了 Dagger2 注入、Activity 管理以及根布局等初始化操作
+     * 重写 onCreate() 方法，初始化当前 Context 对象，打印信息
      */
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Dagger2 注入
-        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
 
         // 保存当前 Context 对象
-        mContext = this
+        mContext = activity
 
-        // 添加到 AppManager 应用管理
-        AppManager.INSTANCE.addActivity(this)
+        Log.w("Fragment---->>", "create---->>$this")
+    }
+
+    /**
+     * 重写 onCreateView() 方法，加载根布局、当前界面布局及相关初始化
+     */
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         // 加载根布局，初始化 DataBinding
         rootBinding = DataBindingUtil.inflate(
@@ -58,27 +62,6 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
         )
         // 绑定事件处理
         rootBinding.handler = RootHandler(this)
-    }
-
-    /**
-     * 重写 onDestroy() 方法，移除 Activity 管理以及 MVP 生命周期管理
-     */
-    override fun onDestroy() {
-
-        // 从应用管理移除当前 Activity 对象
-        AppManager.INSTANCE.removeActivity(this)
-
-        // 界面销毁时，消费所有事件，清空引用
-        presenter.dispose()
-        presenter.detach()
-
-        super.onDestroy()
-    }
-
-    /**
-     * 重写 setContentView(layoutResID) 方法，使其支持 DataBinding 以及标题栏、状态栏初始化操作
-     */
-    override fun setContentView(layoutResID: Int) {
 
         // 初始化标题栏
         initTitleBar()
@@ -86,45 +69,52 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
         // 加载布局，初始化 DataBinding
         mBinding = DataBindingUtil.inflate(
                 LayoutInflater.from(mContext),
-                layoutResID, null, false
+                layoutResID(), null, false
         )
 
         // 将当前布局添加到根布局
         rootBinding.flContent.removeAllViews()
         rootBinding.flContent.addView(mBinding.root)
 
-        // 设置布局
-        super.setContentView(rootBinding.root)
+        // 初始化布局
+        initView()
 
-        // 初始化状态栏
-        initStatusBar()
+        // 设置布局
+        return rootBinding.root
     }
 
     /**
-     * 初始化标题栏，抽象方法，子类实现标题栏自定义
+     * 重写 onDestroy() 方法，MVP 生命周期管理、打印信息
+     */
+    override fun onDestroy() {
+
+        // 界面销毁时，消费所有事件，清空引用
+        presenter.dispose()
+        presenter.detach()
+
+        // 打印信息
+        Log.w("Fragment---->>", "destroy---->$this")
+
+        super.onDestroy()
+    }
+
+    /**
+     * 绑定布局
+     *
+     * @return 当前界面布局id
+     */
+    @LayoutRes
+    protected abstract fun layoutResID(): Int
+
+    /**
+     * 初始化布局
+     */
+    protected abstract fun initView()
+
+    /**
+     * 初始化标题栏
      */
     protected abstract fun initTitleBar()
-
-    /**
-     * 初始化状态栏，默认主题色、不透明，修改需重写
-     */
-    protected fun initStatusBar() {
-        setStatusBar()
-    }
-
-    /**
-     * 设置状态栏，默认主题色、不透明
-     *
-     * @param colorResId    状态栏颜色，默认主题色
-     * @param alpha         状态栏透明度，默认不透明，取值范围 0~255
-     */
-    protected fun setStatusBar(@ColorRes colorResId: Int = R.color.colorTheme, alpha: Int = 0) {
-        if (alpha !in 0..255) {
-            RuntimeException("The value of the alpha must between 0 and 255")
-        } else {
-            StatusBarUtil.setResColor(this, colorResId, alpha)
-        }
-    }
 
     /**
      * 显示标题栏
@@ -261,9 +251,7 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     /**
      * 标题栏左侧点击事件，默认结束当前界面
      */
-    override fun onLeftClick() {
-        finish()
-    }
+    override fun onLeftClick() {}
 
     /**
      * 标题栏右侧点击事件
@@ -283,5 +271,4 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     override fun onNetErrorClick() {
         onLoading()
     }
-
 }

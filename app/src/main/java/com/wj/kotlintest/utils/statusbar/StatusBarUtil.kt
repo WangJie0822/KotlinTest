@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.os.Build
+import android.support.annotation.ColorRes
 import android.support.v4.widget.DrawerLayout
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,18 @@ import android.widget.LinearLayout
 object StatusBarUtil {
 
     val DEFAULT_STATUS_BAR_ALPHA = 112//112半透明 0全透明
+
+    /**
+     * 设置状态栏颜色
+     *
+     * @param activity           需要设置的activity
+     * @param colorResId         状态栏颜色资源id
+     * @param alpha              状态栏透明度
+     */
+    fun setResColor(activity: Activity, @ColorRes colorResId: Int, alpha: Int) {
+        val color = activity.resources.getColor(colorResId)
+        setColor(activity, color, alpha)
+    }
 
     /**
      * 设置状态栏颜色
@@ -414,29 +427,3 @@ object StatusBarUtil {
         }
     }
 }
-/**
- * 设置状态栏颜色
- *
- * @param activity 需要设置的 activity
- * @param color    状态栏颜色值
- */
-/**
- * 使状态栏半透明
- *
- * 适用于图片作为背景的界面,此时需要图片填充到状态栏
- *
- * @param activity 需要设置的activity
- */
-/**
- * 为DrawerLayout 布局设置状态栏变色
- *
- * @param activity     需要设置的activity
- * @param drawerLayout DrawerLayout
- * @param color        状态栏颜色值
- */
-/**
- * 为 DrawerLayout 布局设置状态栏透明
- *
- * @param activity     需要设置的activity
- * @param drawerLayout DrawerLayout
- */

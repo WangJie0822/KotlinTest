@@ -13,7 +13,7 @@ class RootHandler(private val listener: OnTitleClickListener) : BaseObservable()
 
     /** 标记-是否显示标题栏  */
     @get:Bindable
-    var isShowTitle: Boolean = false
+    var showTitle: Boolean = false
         set(showTitle) {
             field = showTitle
             notifyPropertyChanged(BR.showTitle)
@@ -21,7 +21,7 @@ class RootHandler(private val listener: OnTitleClickListener) : BaseObservable()
 
     /** 标记-是否显示左侧图标  */
     @get:Bindable
-    var isShowIvLeft: Boolean = false
+    var showIvLeft: Boolean = false
         set(showIvLeft) {
             field = showIvLeft
             notifyPropertyChanged(BR.showIvLeft)
@@ -29,7 +29,7 @@ class RootHandler(private val listener: OnTitleClickListener) : BaseObservable()
 
     /** 标记-是否显示右侧图标  */
     @get:Bindable
-    var isShowIvRight: Boolean = false
+    var showIvRight: Boolean = false
         set(showIvRight) {
             field = showIvRight
             notifyPropertyChanged(BR.showIvRight)
@@ -37,7 +37,7 @@ class RootHandler(private val listener: OnTitleClickListener) : BaseObservable()
 
     /** 标记-是否显示标题  */
     @get:Bindable
-    var isShowTvTitle: Boolean = false
+    var showTvTitle: Boolean = false
         set(showTvTitle) {
             field = showTvTitle
             notifyPropertyChanged(BR.showTvTitle)
@@ -45,7 +45,7 @@ class RootHandler(private val listener: OnTitleClickListener) : BaseObservable()
 
     /** 标记-是否显示右侧文字  */
     @get:Bindable
-    var isShowTvRight: Boolean = false
+    var showTvRight: Boolean = false
         set(showTvRight) {
             field = showTvRight
             notifyPropertyChanged(BR.showTvRight)
@@ -53,7 +53,7 @@ class RootHandler(private val listener: OnTitleClickListener) : BaseObservable()
 
     /** 标记-是否显示网络异常  */
     @get:Bindable
-    var isShowNetError: Boolean = false
+    var showNetError: Boolean = false
         set(showNetError) {
             field = showNetError
             notifyPropertyChanged(BR.showNetError)
@@ -61,7 +61,7 @@ class RootHandler(private val listener: OnTitleClickListener) : BaseObservable()
 
     /** 标记-是否显示无数据  */
     @get:Bindable
-    var isShowNoData: Boolean = false
+    var showNoData: Boolean = false
         set(showNoData) {
             field = showNoData
             notifyPropertyChanged(BR.showNoData)
@@ -69,7 +69,7 @@ class RootHandler(private val listener: OnTitleClickListener) : BaseObservable()
 
     /** 标记-是否显示加载中  */
     @get:Bindable
-    var isShowLoading: Boolean = false
+    var showLoading: Boolean = false
         set(showLoading) {
             field = showLoading
             notifyPropertyChanged(BR.showLoading)
@@ -77,18 +77,18 @@ class RootHandler(private val listener: OnTitleClickListener) : BaseObservable()
 
     /** 左侧按钮图片id  */
     @get:Bindable
-    var ivLeftResId: Int = 0
-        set(@DrawableRes ivLeftRedId) {
-            field = ivLeftRedId
-            notifyPropertyChanged(BR.ivLeftResId)
+    var ivLeftResID: Int = 0
+        set(@DrawableRes ivLeftRedID) {
+            field = ivLeftRedID
+            notifyPropertyChanged(BR.ivLeftResID)
         }
 
     /** 右侧按钮图片id  */
     @get:Bindable
-    var ivRightResId: Int = 0
-        set(@DrawableRes ivRightResId) {
-            field = ivRightResId
-            notifyPropertyChanged(BR.ivRightResId)
+    var ivRightResID: Int = 0
+        set(@DrawableRes ivRightResID) {
+            field = ivRightResID
+            notifyPropertyChanged(BR.ivRightResID)
         }
 
     /** 标题文本  */

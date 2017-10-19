@@ -47,7 +47,7 @@ open class BaseMVPPresenter<V : BaseMVPView, M : BaseMVPModule> {
      *
      * @return 是否成功
     </T> */
-    protected fun <T : BaseBean> checkResponse(data: T): Boolean {
+    protected fun <T : BaseEntity> checkResponse(data: T): Boolean {
 
         if (data.code == Constants.ResponseCode.LOGIN_INVALID) { // 登录失效
             //            LoginInvalidUtil.getInstance().show(R.string.dialog_login_invalid_msg);
@@ -75,6 +75,13 @@ open class BaseMVPPresenter<V : BaseMVPView, M : BaseMVPModule> {
         if (!disposables.isDisposed && disposables.size() > 0) {
             disposables.dispose()
         }
+    }
+
+    interface OnNetFinishListener<in E : BaseEntity> {
+
+        fun onSuccess(entity: E)
+
+        fun onFail(fail: Throwable)
     }
 
 }

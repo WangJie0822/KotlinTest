@@ -9,5 +9,4 @@ import javax.inject.Inject
 /**
  * 空白Presenter
  */
-class BlankPresenter @Inject
-internal constructor() : BaseMVPPresenter<BaseMVPView, BaseMVPModule>()
+class BlankPresenter @Inject constructor() : BaseMVPPresenter<BaseMVPView, BaseMVPModule>()

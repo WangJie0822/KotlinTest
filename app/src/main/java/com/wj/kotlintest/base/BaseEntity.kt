@@ -3,7 +3,7 @@ package com.wj.kotlintest.base
 /**
  * 数据实体类基类
  */
-open class BaseBean {
+open class BaseEntity {
 
     /** 返回信息  */
     open var msg: String? = null

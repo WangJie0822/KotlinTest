@@ -10,6 +10,13 @@ import javax.inject.Inject
 class TestA @Inject constructor(){
 
     override fun toString(): String {
+
+        val str = "fewfw"
+
+        str.a()
+
+
+
         return "Class TestA " + super.toString()
     }
 }
