@@ -1,30 +1,30 @@
 package com.wj.kotlintest.fragment
 
 import android.support.v7.widget.GridLayoutManager
-import android.widget.Toast
 import com.wj.kotlintest.R
 import com.wj.kotlintest.adapter.MoviesListAdapter
 import com.wj.kotlintest.base.BaseFragment
-import com.wj.kotlintest.bean.MoviesBean
-import com.wj.kotlintest.bean.MoviesListEntity
-import com.wj.kotlintest.databinding.FragmentMoviesHighestRatedBinding
+import com.wj.kotlintest.databinding.FragmentMoviesListBinding
+import com.wj.kotlintest.entity.MoviesEntity
+import com.wj.kotlintest.entity.MoviesListEntity
 import com.wj.kotlintest.handler.MoviesItemHandler
-import com.wj.kotlintest.mvp.MoviesHighestRatedPresenter
-import com.wj.kotlintest.mvp.MoviesHighestRatedView
+import com.wj.kotlintest.mvp.MoviesListPresenter
+import com.wj.kotlintest.mvp.MoviesListView
+import com.wj.kotlintest.utils.ToastUtil
 import javax.inject.Inject
 
 /**
- * 评价最高的电影
+ * 电影列表界面
  */
-class MoviesHighestRatedFragment : BaseFragment<MoviesHighestRatedPresenter, FragmentMoviesHighestRatedBinding>(), MoviesHighestRatedView {
+class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListBinding>(), MoviesListView {
 
-    val mData = ArrayList<MoviesBean>()
+    private val mData = ArrayList<MoviesEntity>()
 
     @Inject
     lateinit var adapter: MoviesListAdapter
 
     override fun layoutResID(): Int {
-        return R.layout.fragment_movies_highest_rated
+        return R.layout.fragment_movies_list
     }
 
     override fun initView() {
@@ -50,9 +50,8 @@ class MoviesHighestRatedFragment : BaseFragment<MoviesHighestRatedPresenter, Fra
     }
 
     inner class HighestRatedHandler : MoviesItemHandler {
-        override fun onMoviesItemClick(item: MoviesBean) {
-            Toast.makeText(mContext, item.original_title, Toast.LENGTH_SHORT).show()
+        override fun onMoviesItemClick(item: MoviesEntity) {
+            ToastUtil.show(item.title)
         }
-
     }
 }

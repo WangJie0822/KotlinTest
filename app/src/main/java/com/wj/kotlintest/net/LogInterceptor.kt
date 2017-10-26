@@ -119,7 +119,7 @@ class LogInterceptor() : Interceptor {
                 logStr.append("<-- END HTTP (encoded body omitted)\n")
             } else {
                 val source = responseBody.source()
-                source.require(Long.MAX_VALUE)
+                source.request(Long.MAX_VALUE)
                 val buffer = source.buffer()
 
                 var charset = charsetUTF8

@@ -8,8 +8,8 @@ import com.bumptech.glide.request.transition.Transition
 import com.wj.kotlintest.R
 import com.wj.kotlintest.base.BaseRvAdapter
 import com.wj.kotlintest.base.BaseRvViewHolder
-import com.wj.kotlintest.bean.MoviesBean
 import com.wj.kotlintest.databinding.ItemMoviesListBinding
+import com.wj.kotlintest.entity.MoviesEntity
 import com.wj.kotlintest.glide.GlideApp
 import com.wj.kotlintest.handler.MoviesItemHandler
 import com.wj.kotlintest.net.UrlDefinition
@@ -20,8 +20,9 @@ import javax.inject.Inject
  *
  * @author 王杰
  */
-class MoviesListAdapter @Inject constructor() : BaseRvAdapter<
-        MoviesBean,
+class MoviesListAdapter @Inject constructor()
+    : BaseRvAdapter<
+        MoviesEntity,
         MoviesListAdapter.ViewHolder,
         MoviesItemHandler,
         ItemMoviesListBinding>() {
@@ -34,8 +35,12 @@ class MoviesListAdapter @Inject constructor() : BaseRvAdapter<
         return ViewHolder(binding)
     }
 
-    class ViewHolder(binding: ItemMoviesListBinding) : BaseRvViewHolder<ItemMoviesListBinding, MoviesBean>(binding) {
-        override fun bindData(entity: MoviesBean) {
+    override fun convert(holder: ViewHolder, entity: MoviesEntity) {
+        holder.bindData(entity)
+    }
+
+    class ViewHolder(binding: ItemMoviesListBinding) : BaseRvViewHolder<ItemMoviesListBinding, MoviesEntity>(binding) {
+        override fun bindData(entity: MoviesEntity) {
             super.bindData(entity)
             val ctx = mBinding.iv.context
             GlideApp.with(ctx)

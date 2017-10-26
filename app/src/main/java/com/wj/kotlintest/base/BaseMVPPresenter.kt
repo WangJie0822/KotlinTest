@@ -8,8 +8,8 @@ import javax.inject.Inject
 /**
  * Presenter基类
  *
- * @param <V> MVP View类型 继承[BaseMVPView]
- * @param <M> MVP Module 继承[BaseMVPModule]
+ * @param V MVP View类型 继承[BaseMVPView]
+ * @param M MVP Module 继承[BaseMVPModule]
  */
 open class BaseMVPPresenter<V : BaseMVPView, M : BaseMVPModule> {
 
@@ -43,21 +43,12 @@ open class BaseMVPPresenter<V : BaseMVPView, M : BaseMVPModule> {
      * 检查请求返回数据，并在登录状态异常时弹出提示
      *
      * @param data 返回数据
-     * @param <T>  返回数据类型
+     * @param T  返回数据类型
      *
      * @return 是否成功
-    </T> */
+     */
     protected fun <T : BaseEntity> checkResponse(data: T): Boolean {
 
-        if (data.code == Constants.ResponseCode.LOGIN_INVALID) { // 登录失效
-            //            LoginInvalidUtil.getInstance().show(R.string.dialog_login_invalid_msg);
-        } else if (data.code == Constants.ResponseCode.LOGIN_ON_OTHER) { // 在其他设备登录
-            //            LoginInvalidUtil.getInstance().show(R.string.dialog_login_on_other);
-        } else if (data.code == Constants.ResponseCode.LOGIN_PWD_CHANGED) { // 密码已变更
-            //            LoginInvalidUtil.getInstance().show(R.string.dialog_login_pwd_changed);
-        } else if (false) { // 用户不存在
-            //            LoginInvalidUtil.getInstance().show(R.string.user_not_exist);
-        }
         return data.code == Constants.ResponseCode.SUCCESS
     }
 
@@ -75,13 +66,6 @@ open class BaseMVPPresenter<V : BaseMVPView, M : BaseMVPModule> {
         if (!disposables.isDisposed && disposables.size() > 0) {
             disposables.dispose()
         }
-    }
-
-    interface OnNetFinishListener<in E : BaseEntity> {
-
-        fun onSuccess(entity: E)
-
-        fun onFail(fail: Throwable)
     }
 
 }

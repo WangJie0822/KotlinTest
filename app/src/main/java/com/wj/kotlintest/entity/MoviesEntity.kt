@@ -1,11 +1,11 @@
-package com.wj.kotlintest.bean
+package com.wj.kotlintest.entity
 
 import java.util.*
 
 /**
  * @author 王杰
  */
-class MoviesBean {
+class MoviesEntity {
     /**
      * poster_path : /9O7gLzmreU0nGkIB6K3BsJbzvNv.jpg
      * adult : false

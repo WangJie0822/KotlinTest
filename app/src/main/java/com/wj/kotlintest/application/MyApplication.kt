@@ -1,51 +1,43 @@
 package com.wj.kotlintest.application
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.app.Application
-import android.support.v4.app.Fragment
-import com.wj.kotlintest.dagger.sub.application.DaggerApplicationSub
+import android.databinding.DataBindingComponent
+import android.databinding.DataBindingUtil
+import com.wj.kotlintest.dagger.DaggerApplicationSub
+import com.wj.kotlintest.databinding.DataBindingAdapter
+import com.wj.kotlintest.utils.ToastUtil
 import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasActivityInjector
-import dagger.android.support.HasSupportFragmentInjector
-import javax.inject.Inject
+import dagger.android.support.DaggerApplication
 
 /**
- *
+ * Application 类
  *
  * @author 王杰
  */
-class MyApplication : Application(), HasActivityInjector, HasSupportFragmentInjector {
+class MyApplication : DaggerApplication() {
 
     companion object {
         @SuppressLint("StaticFieldLeak")
-        lateinit var INSTANCE: Application
+        lateinit var INSTANCE: MyApplication
     }
-
-    @Inject
-    lateinit var activityInjector: DispatchingAndroidInjector<Activity>
-
-    @Inject
-    lateinit var supportFragInjector: DispatchingAndroidInjector<Fragment>
 
     override fun onCreate() {
         super.onCreate()
 
         INSTANCE = this
 
-        DaggerApplicationSub
-                .builder()
-                .build()
-                .inject(this)
+        ToastUtil.bindContext(this)
+
+        DataBindingUtil.setDefaultComponent(object : DataBindingComponent {
+            override fun getDataBindingAdapter(): DataBindingAdapter {
+                return DataBindingAdapter
+            }
+        })
 
     }
 
-    override fun activityInjector(): AndroidInjector<Activity> {
-        return activityInjector
+    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
+        return DaggerApplicationSub.builder().create(this)
     }
 
-    override fun supportFragmentInjector(): AndroidInjector<Fragment> {
-        return supportFragInjector
-    }
 }

@@ -5,14 +5,15 @@ package com.wj.kotlintest.test;
  */
 public class A {
 
-    void a() {
+    private A() {
 
-        String a = "fewf";
-        String b = "Fewf";
+    }
 
-        boolean b1 = a.equalsIgnoreCase(b);
+    static class Helper {
+        static final A  a= new A();
+    }
 
-
-
+    public static A getInstance() {
+        return Helper.a;
     }
 }

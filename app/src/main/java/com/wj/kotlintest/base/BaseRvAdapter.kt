@@ -17,14 +17,16 @@ import com.wj.kotlintest.BR
  * @param <H>  事件处理类型 Handler
  * @param <DB>  DataBinding 类型，与 VH 一致 继承 ViewDataBinding
  */
-abstract class BaseRvAdapter<E, VH : BaseRvViewHolder<*, *>, H, DB : ViewDataBinding> : RecyclerView.Adapter<VH>() {
+abstract class BaseRvAdapter<E, VH : BaseRvViewHolder<*, *>, H, in DB : ViewDataBinding> : RecyclerView.Adapter<VH>() {
 
-    /** 布局类型-头布局  */
-    protected val VIEW_TYPE_HEADER = 0x00038
-    /** 布局类型-正常  */
-    protected val VIEW_TYPE_NORMAL = 0x00046
-    /** 布局类型-脚布局  */
-    protected val VIEW_TYPE_FOOTER = 0x00508
+    companion object {
+        /** 布局类型-头布局  */
+        protected val VIEW_TYPE_HEADER = 0x00038
+        /** 布局类型-正常  */
+        protected val VIEW_TYPE_NORMAL = 0x00046
+        /** 布局类型-脚布局  */
+        protected val VIEW_TYPE_FOOTER = 0x00508
+    }
 
     /** 数据集合  */
     protected lateinit var mData: ArrayList<E>
@@ -33,9 +35,9 @@ abstract class BaseRvAdapter<E, VH : BaseRvViewHolder<*, *>, H, DB : ViewDataBin
     protected var handler: H? = null
 
     /** 头布局集合 */
-    private var headers: ArrayList<View> = ArrayList()
+    private val headers: ArrayList<View> = ArrayList()
     /** 脚布局集合 */
-    private var footers: ArrayList<View> = ArrayList()
+    private val footers: ArrayList<View> = ArrayList()
 
     /** 头布局下标 */
     private var mHeaderPos: Int = 0
@@ -82,7 +84,7 @@ abstract class BaseRvAdapter<E, VH : BaseRvViewHolder<*, *>, H, DB : ViewDataBin
                     layoutResID(), parent, false
             )
             // 绑定事件处理
-            binding.setVariable(BR.handler, handler)
+            handler?.let { binding.setVariable(BR.handler, handler) }
             // 创建 ViewHolder
             createViewHolder(binding)
         } else return if (viewType == VIEW_TYPE_HEADER) { // 头布局
@@ -139,7 +141,7 @@ abstract class BaseRvAdapter<E, VH : BaseRvViewHolder<*, *>, H, DB : ViewDataBin
     fun addHeader(headerView: View) {
 
         if (null == createViewHolder(headerView)) {
-            throw RuntimeException("the method createViewHolder(view) in your adapter must be overwrite!")
+            throw RuntimeException("Please override createViewHolder(view) first!")
         }
 
         headers.add(headerView)
@@ -153,7 +155,7 @@ abstract class BaseRvAdapter<E, VH : BaseRvViewHolder<*, *>, H, DB : ViewDataBin
     fun addFooter(footerView: View) {
 
         if (null == createViewHolder(footerView)) {
-            throw RuntimeException("the method createViewHolder(view) in your adapter must be overwrite!")
+            throw RuntimeException("Please override createViewHolder(view) first!")
         }
 
         footers.add(footerView)
@@ -167,17 +169,6 @@ abstract class BaseRvAdapter<E, VH : BaseRvViewHolder<*, *>, H, DB : ViewDataBin
     protected abstract fun layoutResID(): Int
 
     /**
-     * 绑定数据
-     *
-     * @param holder ViewHolder
-     * @param item   数据对象
-     */
-    protected fun convert(holder: VH, item: E) {
-        @Suppress("UNREACHABLE_CODE", "CAST_NEVER_SUCCEEDS")
-        holder.bindData(item as Nothing)
-    }
-
-    /**
      * 创建ViewHolder
      *
      * @param binding DataBinding对象
@@ -185,6 +176,14 @@ abstract class BaseRvAdapter<E, VH : BaseRvViewHolder<*, *>, H, DB : ViewDataBin
      * @return ViewHolder
      */
     protected abstract fun createViewHolder(binding: DB): VH
+
+    /**
+     * 绑定数据
+     *
+     * @param holder ViewHolder
+     * @param entity   数据对象
+     */
+    protected abstract fun convert(holder: VH, entity: E)
 
     /**
      * 创建ViewHolder 使用头布局时必须重写

@@ -15,13 +15,14 @@ import com.wj.kotlintest.databinding.RootHandler
 import com.wj.kotlintest.utils.AppManager
 import com.wj.kotlintest.utils.statusbar.StatusBarUtil
 import dagger.android.AndroidInjection
+import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 
 /**
  * Activity 基类
  */
 abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
-    : AppCompatActivity(),
+    : DaggerAppCompatActivity(),
         BaseMVPView,
         RootHandler.OnTitleClickListener {
 
@@ -49,7 +50,7 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
         mContext = this
 
         // 添加到 AppManager 应用管理
-        AppManager.INSTANCE.addActivity(this)
+        AppManager.addActivity(this)
 
         // 加载根布局，初始化 DataBinding
         rootBinding = DataBindingUtil.inflate(
@@ -66,7 +67,7 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     override fun onDestroy() {
 
         // 从应用管理移除当前 Activity 对象
-        AppManager.INSTANCE.removeActivity(this)
+        AppManager.removeActivity(this)
 
         // 界面销毁时，消费所有事件，清空引用
         presenter.dispose()
@@ -137,15 +138,20 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
      * 设置标题文本
      *
      * @param strResID 标题文本资源id
+     */
+    protected fun setTitleStr(@StringRes strResID: Int) {
+        rootBinding.handler.showTvTitle = true
+        rootBinding.handler.tvTitle = getString(strResID)
+    }
+
+    /**
+     * 设置标题文本
+     *
      * @param str      标题文本
      */
-    protected fun setTitleStr(@StringRes strResID: Int = -1, str: String = "") {
+    protected fun setTitleStr(str: String) {
         rootBinding.handler.showTvTitle = true
-        rootBinding.handler.tvTitle = if (-1 != strResID) {
-            getString(strResID)
-        } else {
-            str
-        }
+        rootBinding.handler.tvTitle = str
     }
 
     /**

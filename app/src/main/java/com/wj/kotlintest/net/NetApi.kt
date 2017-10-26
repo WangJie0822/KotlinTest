@@ -1,6 +1,6 @@
 package com.wj.kotlintest.net
 
-import com.wj.kotlintest.bean.MoviesListEntity
+import com.wj.kotlintest.entity.MoviesListEntity
 import io.reactivex.Observable
 import retrofit2.http.GET
 import retrofit2.http.Url

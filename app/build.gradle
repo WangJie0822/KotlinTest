@@ -51,10 +51,13 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    /* Dagger 2 */
     implementation 'com.google.dagger:dagger:2.12'
     implementation 'com.google.dagger:dagger-android-support:2.12'
     kapt 'com.google.dagger:dagger-compiler:2.12'
+    kapt 'com.google.dagger:dagger-android-processor:2.12'
     provided 'org.glassfish:javax.annotation:10.0-b28'
+    /* DataBinding */
     kapt 'com.android.databinding:compiler:2.3.3'
     /* OkHttp + Retrofit */
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'

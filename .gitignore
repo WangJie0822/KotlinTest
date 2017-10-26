@@ -8,3 +8,4 @@
 /captures
 .externalNativeBuild
 signing.properties
+findbugs-android-exclude.xml
