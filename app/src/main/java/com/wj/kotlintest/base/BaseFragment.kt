@@ -120,22 +120,26 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
      * 显示标题栏
      */
     protected fun showTitle() {
-        rootBinding.handler.showTitle = true
+        rootBinding.handler?.showTitle = true
     }
 
     /**
      * 设置标题文本
      *
      * @param strResID 标题文本资源id
+     */
+    protected fun setTitleStr(@StringRes strResID: Int) {
+        setTitleStr(getString(strResID))
+    }
+
+    /**
+     * 设置标题文本
+     *
      * @param str      标题文本
      */
-    protected fun setTitleStr(@StringRes strResID: Int = -1, str: String = "") {
-        rootBinding.handler.showTvTitle = true
-        rootBinding.handler.tvTitle = if (-1 != strResID) {
-            getString(strResID)
-        } else {
-            str
-        }
+    protected fun setTitleStr(str: String) {
+        rootBinding.handler?.showTvTitle = true
+        rootBinding.handler?.tvTitle = str
     }
 
     /**
@@ -144,8 +148,8 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
      * @param resID     标题栏左侧图标资源id，默认返回按钮
      */
     protected fun setIvLeft(@DrawableRes resID: Int = R.mipmap.arrow_left_white) {
-        rootBinding.handler.showIvLeft = true
-        rootBinding.handler.ivLeftResID = resID
+        rootBinding.handler?.showIvLeft = true
+        rootBinding.handler?.ivLeftResID = resID
     }
 
     /**
@@ -154,8 +158,8 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
      * @param resID 图片资源id
      */
     protected fun setIvRight(@DrawableRes resID: Int) {
-        rootBinding.handler.showIvRight = true
-        rootBinding.handler.ivRightResID = resID
+        rootBinding.handler?.showIvRight = true
+        rootBinding.handler?.ivRightResID = resID
     }
 
     /**
@@ -164,8 +168,8 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
      * @param strResID 文本资源id
      */
     protected fun setTvRight(@StringRes strResID: Int) {
-        rootBinding.handler.showTvRight = true
-        rootBinding.handler.tvRight = getString(strResID)
+        rootBinding.handler?.showTvRight = true
+        rootBinding.handler?.tvRight = getString(strResID)
     }
 
     /**
@@ -173,18 +177,20 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
      */
     override fun onNetError() {
         val handler = rootBinding.handler
-        if (handler.showNoData) {
-            handler.showNoData = false
+        handler?.let {
+            if (handler.showNoData) {
+                handler.showNoData = false
+            }
+            if (handler.showLoading) {
+                val drawable = rootBinding.ivLoading.drawable
+                (drawable as? AnimationDrawable)?.stop()
+                handler.showLoading = false
+            }
+            if (!handler.showNetError) {
+                handler.showNetError = true
+            }
+            onListComplete()
         }
-        if (handler.showLoading) {
-            val drawable = rootBinding.ivLoading.drawable
-            (drawable as? AnimationDrawable)?.stop()
-            handler.showLoading = false
-        }
-        if (!handler.showNetError) {
-            handler.showNetError = true
-        }
-        onListComplete()
     }
 
     /**
@@ -192,18 +198,20 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
      */
     override fun onNoData() {
         val handler = rootBinding.handler
-        if (handler.showNetError) {
-            handler.showNetError = false
+        handler?.let {
+            if (handler.showNetError) {
+                handler.showNetError = false
+            }
+            if (handler.showLoading) {
+                val drawable = rootBinding.ivLoading.drawable
+                (drawable as? AnimationDrawable)?.stop()
+                handler.showLoading = false
+            }
+            if (!handler.showNoData) {
+                handler.showNoData = true
+            }
+            onListComplete()
         }
-        if (handler.showLoading) {
-            val drawable = rootBinding.ivLoading.drawable
-            (drawable as? AnimationDrawable)?.stop()
-            handler.showLoading = false
-        }
-        if (!handler.showNoData) {
-            handler.showNoData = true
-        }
-        onListComplete()
     }
 
     /**
@@ -211,16 +219,18 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
      */
     override fun onLoading() {
         val handler = rootBinding.handler
-        if (handler.showNetError) {
-            handler.showNetError = false
-        }
-        if (handler.showNoData) {
-            handler.showNoData = false
-        }
-        if (!handler.showLoading) {
-            val drawable = rootBinding.ivLoading.drawable
-            (drawable as? AnimationDrawable)?.start()
-            handler.showLoading = true
+        handler?.let {
+            if (handler.showNetError) {
+                handler.showNetError = false
+            }
+            if (handler.showNoData) {
+                handler.showNoData = false
+            }
+            if (!handler.showLoading) {
+                val drawable = rootBinding.ivLoading.drawable
+                (drawable as? AnimationDrawable)?.start()
+                handler.showLoading = true
+            }
         }
     }
 
@@ -229,18 +239,20 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
      */
     override fun onNetFinished() {
         val handler = rootBinding.handler
-        if (handler.showNetError) {
-            handler.showNetError = false
+        handler?.let {
+            if (handler.showNetError) {
+                handler.showNetError = false
+            }
+            if (handler.showNoData) {
+                handler.showNoData = false
+            }
+            if (handler.showLoading) {
+                val drawable = rootBinding.ivLoading.drawable
+                (drawable as? AnimationDrawable)?.stop()
+                handler.showLoading = false
+            }
+            onListComplete()
         }
-        if (handler.showNoData) {
-            handler.showNoData = false
-        }
-        if (handler.showLoading) {
-            val drawable = rootBinding.ivLoading.drawable
-            (drawable as? AnimationDrawable)?.stop()
-            handler.showLoading = false
-        }
-        onListComplete()
     }
 
     /**

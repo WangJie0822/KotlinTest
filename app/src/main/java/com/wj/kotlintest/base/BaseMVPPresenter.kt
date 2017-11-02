@@ -21,7 +21,7 @@ open class BaseMVPPresenter<V : BaseMVPView, M : BaseMVPModule> {
     protected lateinit var mModule: M
 
     /** RxJava2 生命周期管理  */
-    private val disposables: CompositeDisposable = CompositeDisposable()
+    private val disposables = CompositeDisposable()
 
     /**
      * 界面绑定，关联 MVP View
@@ -48,7 +48,6 @@ open class BaseMVPPresenter<V : BaseMVPView, M : BaseMVPModule> {
      * @return 是否成功
      */
     protected fun <T : BaseEntity> checkResponse(data: T): Boolean {
-
         return data.code == Constants.ResponseCode.SUCCESS
     }
 
@@ -62,7 +61,7 @@ open class BaseMVPPresenter<V : BaseMVPView, M : BaseMVPModule> {
     /**
      * 消费所有事件
      */
-    internal fun dispose() {
+    fun dispose() {
         if (!disposables.isDisposed && disposables.size() > 0) {
             disposables.dispose()
         }

@@ -2,12 +2,12 @@ package com.wj.kotlintest.activity
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import com.wj.kotlintest.BlankPresenter
 import com.wj.kotlintest.R
 import com.wj.kotlintest.adapter.FragVpAdapter
 import com.wj.kotlintest.base.BaseActivity
 import com.wj.kotlintest.databinding.ActivityMainBinding
 import com.wj.kotlintest.fragment.MoviesListFragment
+import com.wj.kotlintest.mvp.BlankPresenter
 
 /**
  * 主界面
