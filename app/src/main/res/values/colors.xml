@@ -5,8 +5,8 @@
     <color name="colorAccent">#FF4081</color>
 
     <!-- 主题色 -->
-    <color name="colorTheme">#C707E1</color>
-    <color name="colorThemeHalf">#80C707E1</color>
+    <color name="colorTheme">#04A1C1</color>
+    <color name="colorThemeHalf">#8004A1C1</color>
 
     <color name="white">#FFFFFF</color>
     <color name="black">#000000</color>

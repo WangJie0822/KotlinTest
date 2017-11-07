@@ -2,6 +2,7 @@ package com.wj.kotlintest.activity
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.view.ViewPager
 import com.wj.kotlintest.R
 import com.wj.kotlintest.adapter.FragVpAdapter
 import com.wj.kotlintest.base.BaseActivity
@@ -19,7 +20,23 @@ class MainActivity : BaseActivity<BlankPresenter, ActivityMainBinding>() {
         setContentView(R.layout.activity_main)
 
         val mFrags = ArrayList<Fragment>()
-        mFrags.add(MoviesListFragment())
+        mFrags.add(MoviesListFragment.actionCreate(MoviesListFragment.TYPE_HIGHEST_RATE))
+        mFrags.add(MoviesListFragment.actionCreate(MoviesListFragment.TYPE_POPULAR))
+
+        mBinding.vp.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
+            override fun onPageScrollStateChanged(state: Int) {
+            }
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+            }
+
+            override fun onPageSelected(position: Int) {
+                when (position) {
+                    0 -> setTitleStr("高评分电影")
+                    1 -> setTitleStr("最流行电影")
+                }
+            }
+        })
 
         mBinding.vp.adapter = FragVpAdapter.Builder()
                 .manager(supportFragmentManager)

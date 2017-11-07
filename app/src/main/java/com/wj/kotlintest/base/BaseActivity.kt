@@ -4,7 +4,6 @@ import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
 import android.graphics.drawable.AnimationDrawable
 import android.os.Bundle
-import android.support.annotation.ColorRes
 import android.support.annotation.DrawableRes
 import android.support.annotation.StringRes
 import android.support.v7.app.AppCompatActivity
@@ -106,22 +105,8 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     /**
      * 初始化状态栏，默认主题色、不透明，修改需重写
      */
-    protected fun initStatusBar() {
-        setStatusBar()
-    }
-
-    /**
-     * 设置状态栏，默认主题色、不透明
-     *
-     * @param colorResId    状态栏颜色，默认主题色
-     * @param alpha         状态栏透明度，默认不透明，取值范围 0~255
-     */
-    protected fun setStatusBar(@ColorRes colorResId: Int = R.color.colorTheme, alpha: Int = 0) {
-        if (alpha !in 0..255) {
-            RuntimeException("The value of the alpha must between 0 and 255")
-        } else {
-            StatusBarUtil.setResColor(this, colorResId, alpha)
-        }
+    open protected fun initStatusBar() {
+        StatusBarUtil.setResColor(this, R.color.colorTheme, 0)
     }
 
     /**
@@ -187,16 +172,16 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     override fun onNetError() {
         val handler = rootBinding.handler
         handler?.let {
-            if (handler.showNoData) {
-                handler.showNoData = false
+            if (it.showNoData) {
+                it.showNoData = false
             }
-            if (handler.showLoading) {
+            if (it.showLoading) {
                 val drawable = rootBinding.ivLoading.drawable
                 (drawable as? AnimationDrawable)?.stop()
-                handler.showLoading = false
+                it.showLoading = false
             }
-            if (!handler.showNetError) {
-                handler.showNetError = true
+            if (!it.showNetError) {
+                it.showNetError = true
             }
             onListComplete()
         }
@@ -208,16 +193,16 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     override fun onNoData() {
         val handler = rootBinding.handler
         handler?.let {
-            if (handler.showNetError) {
-                handler.showNetError = false
+            if (it.showNetError) {
+                it.showNetError = false
             }
-            if (handler.showLoading) {
+            if (it.showLoading) {
                 val drawable = rootBinding.ivLoading.drawable
                 (drawable as? AnimationDrawable)?.stop()
-                handler.showLoading = false
+                it.showLoading = false
             }
-            if (!handler.showNoData) {
-                handler.showNoData = true
+            if (!it.showNoData) {
+                it.showNoData = true
             }
             onListComplete()
         }
@@ -229,16 +214,16 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     override fun onLoading() {
         val handler = rootBinding.handler
         handler?.let {
-            if (handler.showNetError) {
-                handler.showNetError = false
+            if (it.showNetError) {
+                it.showNetError = false
             }
-            if (handler.showNoData) {
-                handler.showNoData = false
+            if (it.showNoData) {
+                it.showNoData = false
             }
-            if (!handler.showLoading) {
+            if (!it.showLoading) {
                 val drawable = rootBinding.ivLoading.drawable
                 (drawable as? AnimationDrawable)?.start()
-                handler.showLoading = true
+                it.showLoading = true
             }
         }
     }
@@ -249,16 +234,16 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     override fun onNetFinished() {
         val handler = rootBinding.handler
         handler?.let {
-            if (handler.showNetError) {
-                handler.showNetError = false
+            if (it.showNetError) {
+                it.showNetError = false
             }
-            if (handler.showNoData) {
-                handler.showNoData = false
+            if (it.showNoData) {
+                it.showNoData = false
             }
-            if (handler.showLoading) {
+            if (it.showLoading) {
                 val drawable = rootBinding.ivLoading.drawable
                 (drawable as? AnimationDrawable)?.stop()
-                handler.showLoading = false
+                it.showLoading = false
             }
             onListComplete()
         }
@@ -267,7 +252,7 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     /**
      * 使用SwipeToLoadView时重写，完成刷新步骤
      */
-    protected fun onListComplete() {}
+    open protected fun onListComplete() {}
 
     /**
      * 标题栏左侧点击事件，默认结束当前界面

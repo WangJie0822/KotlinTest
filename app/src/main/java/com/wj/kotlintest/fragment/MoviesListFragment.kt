@@ -1,5 +1,6 @@
 package com.wj.kotlintest.fragment
 
+import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import com.wj.kotlintest.R
 import com.wj.kotlintest.adapter.MoviesListAdapter
@@ -23,6 +24,27 @@ class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListB
     @Inject
     lateinit var adapter: MoviesListAdapter
 
+    companion object {
+
+        /** 电影列表类型 - 高评分 */
+        val TYPE_HIGHEST_RATE = 0x2342
+        /** 电影列表类型 - 最流行 */
+        val TYPE_POPULAR = 0x2343
+
+        /**
+         * 创建对应 Fragment 对象
+         *
+         * @param type 参数，列表类型 [TYPE_HIGHEST_RATE]、[TYPE_POPULAR]
+         */
+        fun actionCreate(type: Int): MoviesListFragment {
+            val frag = MoviesListFragment()
+            val args = Bundle()
+            args.putInt("MOVIES_TYPE", type)
+            frag.arguments = args
+            return frag
+        }
+    }
+
     override fun layoutResID(): Int {
         return R.layout.fragment_movies_list
     }
@@ -34,13 +56,30 @@ class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListB
         adapter.bindData(mData)
         adapter.bindHandler(HighestRatedHandler())
 
-        mBinding.rv.layoutManager = GridLayoutManager(mContext, 2)
-        mBinding.rv.adapter = adapter
+        mBinding.swipeTarget.layoutManager = GridLayoutManager(mContext, 2)
+        mBinding.swipeTarget.adapter = adapter
 
-        presenter.getHighestRatedMovies()
+        fun initData() {
+            when (arguments.getInt("MOVIES_TYPE")) {
+                TYPE_HIGHEST_RATE -> presenter.getHighestRatedMovies()
+                TYPE_POPULAR -> presenter.getPopularMovies()
+                else -> presenter.getHighestRatedMovies()
+            }
+        }
+
+        mBinding.swipe.setOnRefreshListener {
+           initData()
+        }
+
+        onLoading()
+        initData()
     }
 
     override fun initTitleBar() {
+    }
+
+    override fun onListComplete() {
+        mBinding.swipe.onComplete()
     }
 
     override fun notifyData(data: MoviesListEntity) {
@@ -51,7 +90,7 @@ class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListB
 
     inner class HighestRatedHandler : MoviesItemHandler {
         override fun onMoviesItemClick(item: MoviesEntity) {
-            ToastUtil.show(item.title)
+            item.title?.let { ToastUtil.show(it) }
         }
     }
 }

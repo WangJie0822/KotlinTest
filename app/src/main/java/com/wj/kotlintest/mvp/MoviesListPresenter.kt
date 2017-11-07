@@ -20,7 +20,31 @@ class MoviesListPresenter @Inject constructor() : BaseMVPPresenter<MoviesListVie
 
         val dispose = mModule.getHighestRatedMovies(object : OnNetFinishedListener<MoviesListEntity> {
             override fun onSuccess(entity: MoviesListEntity) {
-                mView?.notifyData(entity)
+                mView?.let {
+                    it.onNetFinished()
+                    it.notifyData(entity)
+                }
+            }
+
+            override fun onFail(fail: Throwable) {
+                Log.e("NET_ERROR", "HIGHEST_RATED_MOVIES", fail)
+            }
+        })
+
+        addDisposable(dispose)
+    }
+
+    /**
+     * 获取最流行电影列表
+     */
+    fun getPopularMovies() {
+
+        val dispose = mModule.getPopularMovies(object : OnNetFinishedListener<MoviesListEntity> {
+            override fun onSuccess(entity: MoviesListEntity) {
+                mView?.let {
+                    it.onNetFinished()
+                    it.notifyData(entity)
+                }
             }
 
             override fun onFail(fail: Throwable) {

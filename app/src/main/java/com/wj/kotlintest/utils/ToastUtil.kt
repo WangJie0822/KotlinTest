@@ -19,8 +19,8 @@ object ToastUtil {
         mContext = context
     }
 
-    fun show(str: String?) {
-        str?.let { Toast.makeText(mContext, it, Toast.LENGTH_SHORT).show() }
+    fun show(str: String) {
+        Toast.makeText(mContext, str, Toast.LENGTH_SHORT).show()
     }
 
     fun show(@StringRes strResID: Int) {

@@ -2,9 +2,21 @@
              xmlns:tools="http://schemas.android.com/tools"
              tools:context="com.wj.kotlintest.fragment.MoviesListFragment">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv"
+    <com.aspsine.swipetoloadlayout.SwipeToLoadLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:id="@+id/swipe"
+        android:layout_height="match_parent">
+
+        <com.aspsine.swipetoloadlayout.view.RefreshView
+            android:id="@id/swipe_refresh_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@id/swipe_target"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </com.aspsine.swipetoloadlayout.SwipeToLoadLayout>
 
 </layout>

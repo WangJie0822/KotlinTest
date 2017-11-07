@@ -1,6 +1,5 @@
 package com.wj.kotlintest.utils
 
-import android.annotation.SuppressLint
 import android.app.ActivityManager
 import android.content.Context
 import android.support.v7.app.AppCompatActivity
@@ -8,7 +7,7 @@ import android.util.Log
 import java.util.*
 
 /**
- * 应用程序Activity管理类：用于Activity管理和应用程序退出
+ * 应用程序 Activity 管理类：用于 Activity 管理和应用程序退出
  */
 object AppManager {
 
@@ -40,18 +39,7 @@ object AppManager {
     /**
      * 结束指定 Activity
      *
-     * @param activity Activity 对象
-     */
-    fun finishActivity(activity: AppCompatActivity) {
-        if (activityStack.contains(activity)) {
-            activity.finish()
-        }
-    }
-
-    /**
-     * 结束指定 Activity
-     *
-     * @param cls Activity 类对象
+     * @param clazz Activity 类对象
      */
     fun finishActivity(clazz: Class<out AppCompatActivity>) {
         val del: AppCompatActivity? = activityStack.lastOrNull { it.javaClass == clazz }
@@ -70,10 +58,10 @@ object AppManager {
     /**
      * 根据类，获取 Activity 对象
      *
-     * @param clazz Activity 类
-     * @param <T> Activity 类型
+     * @param clazz  Activity 类
+     * @param A      Activity 类型
      *
-     * @return Activity对象
+     * @return       Activity对象
      */
     fun <A : AppCompatActivity> getActivity(clazz: Class<out AppCompatActivity>): A? {
         var target: A? = null
@@ -87,7 +75,7 @@ object AppManager {
     }
 
     /**
-     * 结束所有Activity
+     * 结束所有 Activity
      */
     private fun finishAllActivity() {
         for (activity in activityStack) {
@@ -101,7 +89,6 @@ object AppManager {
     /**
      * 退出应用程序
      */
-    @SuppressLint("MissingPermission")
     fun appExit() {
         try {
             finishAllActivity()

@@ -32,7 +32,6 @@ object DataBindingAdapter {
     fun headImg(iv: ImageView, imgUrl: String) {
         GlideApp.with(iv.context)
                 .load(imgUrl)
-                .thumbnail(0.1f)
                 .into(iv)
     }
 

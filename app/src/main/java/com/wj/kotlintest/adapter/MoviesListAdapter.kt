@@ -16,7 +16,7 @@ import com.wj.kotlintest.net.UrlDefinition
 import javax.inject.Inject
 
 /**
- *
+ * 电影列表适配器类
  *
  * @author 王杰
  */
