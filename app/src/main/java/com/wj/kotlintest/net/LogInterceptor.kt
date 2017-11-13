@@ -1,147 +1,247 @@
 package com.wj.kotlintest.net
 
-import android.util.Log
-import com.wj.kotlintest.BuildConfig
 import com.wj.kotlintest.expanding.jsonFormat
+import com.wj.kotlintest.net.LogInterceptor.Companion.DEFAULT_LOGGER
 import okhttp3.Headers
 import okhttp3.Interceptor
 import okhttp3.Protocol
 import okhttp3.Response
 import okhttp3.internal.http.HttpHeaders
+import okhttp3.internal.platform.Platform
 import okio.Buffer
+import java.io.EOFException
 import java.nio.charset.Charset
 import java.util.concurrent.TimeUnit
 
 /**
- * 日志打印拦截器
+ * 网络请求拦截器，打印网络请求相关信息
+ *
+ * @param level 日志打印等级[Level], 默认[Level.BASIC]
+ * @param logger 日志打印接口[Logger], 默认实现[DEFAULT_LOGGER]
  */
-class LogInterceptor : Interceptor {
+class LogInterceptor(var level: Level = Level.BASIC, private val logger: Logger = DEFAULT_LOGGER) : Interceptor {
 
-    private val charsetUTF8 = Charset.forName("UTF-8")
+    companion object {
+        /** 默认字符集 UTF-8 */
+        private val UTF8 = Charset.forName("UTF-8")
+        /** 默认日志打印 */
+        private val DEFAULT_LOGGER = object : Logger {
+            override fun log(msg: String) {
+                Platform.get().log(Platform.INFO, msg, null)
+            }
+        }
+    }
 
     override fun intercept(chain: Interceptor.Chain): Response {
 
-        val request = chain.request() // 获取请求信息
+        // 获取请求对象
+        val request = chain.request()
 
-        if (!BuildConfig.DEBUG) { // 正是环境直接返回，不打印日志
+        // 判断是否打印
+        if (level == Level.NONE) {
+            // 不打印日志，直接返回
             return chain.proceed(request)
         }
 
-        // 日志拦截
-        Log.d("NET_INTERCEPTOR", "---------->> Intercept to log <<----------")
+        // 标记-是否打印数据实体
+        val logBody = level == Level.BODY
+        // 标记-是否打印头
+        val logHeaders = logBody || level == Level.HEADERS
 
-        val requestBody = request.body() // 获取请求体
+        // 声明打印文本
+        val logStr = StringBuilder()
 
+        // 获取请求数据
+        val requestBody = request.body()
+
+        // 获取连接
         val connection = chain.connection()
-        val protocol = if (connection != null) connection.protocol() else Protocol.HTTP_1_1
-
-        val logStr = StringBuilder() // 初始化 Log 输出文本
+        // 获取协议
+        val protocol = if (null == connection) Protocol.HTTP_1_1 else connection.protocol()
+        // 拼接文本
         logStr.append("--> ${request.method()} ${request.url()} $protocol")
-
-        if (null != requestBody) {
-            logStr.append(" (${requestBody.contentLength()}-byte body")
+        if (!logHeaders && requestBody != null) {
+            logStr.append(" (${requestBody.contentLength()}-byte body\n")
         }
 
-        logStr.append("\n")
-
-        if (null != requestBody) {
-            if (null != requestBody.contentType()) {
-                logStr.append("Content-Type: ${requestBody.contentType()}\n")
-            }
-            logStr.append("Content-Length: ${if (requestBody.contentLength() != -1L) "${requestBody.contentLength()}" else "unknown"}\n")
-        }
-
-        val headers = request.headers() // 获取请求头
-        for (i in 0 until headers.size()) {
-            val name = headers.name(i)
-            if (!"Content-Type".equals(name, true) && !"Content_Length".equals(name, true)) {
-                logStr.append("$name: ${headers.value(i)}\n")
-            }
-        }
-
-        fun bodyEncode(headers: Headers): Boolean {
-            val contentEncoding = headers.get("Content-Encoding")
-            return null != contentEncoding && "identity" != contentEncoding
-        }
-
-        when {
-            null == requestBody -> logStr.append("--> END ${request.method()}\n")
-            bodyEncode(headers) -> logStr.append("--> END ${request.method()} (encoded body omitted)\n")
-            else -> {
-                val buffer = Buffer()
-                requestBody.writeTo(buffer)
-
-                var charset = charsetUTF8
-                val contentType = requestBody.contentType()
-                if (null != contentType) {
-                    charset = contentType.charset(charsetUTF8)
+        if (logHeaders) {
+            if (requestBody != null) {
+                if (requestBody.contentType() != null) {
+                    logStr.append("Content-Type ${requestBody.contentType()}\n")
                 }
-
-                logStr.append("\n")
-
-                if (null != charset) {
-                    logStr.append("${buffer.readString(charset)}\n")
+                if (requestBody.contentLength() != -1L) {
+                    logStr.append("Content-Length: ${requestBody.contentLength()}\n")
                 }
+            }
 
-                logStr.append("--> END ${request.method()} (${requestBody.contentLength()}-byte body\n")
+            // 获取请求头
+            val headers = request.headers()
+            for (i in 0 until headers.size()) {
+                val name = headers.name(i)
+                if (!"Content-Type".equals(name, true) && !"Content-Length".equals(name, true)) {
+                    logStr.append("$name: ${headers.value(i)}\n")
+                }
+            }
+
+            when {
+                !logBody || requestBody == null ->
+                    logStr.append("--> END ${request.method()}\n")
+                bodyEncoded(request.headers()) ->
+                    logStr.append("--> END ${request.method()} (encoded body omitted)\n")
+                else -> {
+                    val buffer = Buffer()
+                    requestBody.writeTo(buffer)
+
+                    var charset = UTF8
+                    val contentType = requestBody.contentType()
+                    if (contentType != null) {
+                        charset = contentType.charset(UTF8)
+                    }
+
+                    logStr.append("\n")
+                    if (isPlaintext(buffer)) {
+                        logStr.append("${buffer.readString(charset)}\n")
+                        logStr.append("--> END ${request.method()} (${requestBody.contentLength()}-byte body)\n")
+                    } else {
+                        logStr.append("--> END ${request.method()} (binary ${requestBody.contentLength()}-byte body omitted")
+                    }
+                }
             }
         }
 
         // 记录请求开始时间
         val startNs = System.nanoTime()
-
-        // 发送请求，获取返回数据，会造成多次请求
-        val response = chain.proceed(request)
-        // 统计请求耗时
+        val response = try {
+            chain.proceed(request)
+        } catch (e: Exception) {
+            logStr.append("<-- HTTP FAILED: $e\n")
+            throw e
+        }
+        // 计算请求耗时
         val tookMs = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNs)
 
-        // 获取返回体
+        // 获取响应体
         val responseBody = response.body()
 
-        if (null != responseBody) {
-            val contentLength = responseBody.contentLength()
-            val bodySize = if (contentLength != -1L) "$contentLength-byte" else "unknown-length"
-
+        if (responseBody != null) {
             logStr.append("<-- ${response.code()} ${response.message()} ${response.request().url()}" +
-                    " (${tookMs}ms, $bodySize body)\n")
+                    " (${tookMs}ms${if (!logHeaders)
+                        ", ${if (responseBody.contentLength() != -1L) "$responseBody-byte"
+                        else "unknown-length"} body"
+                    else ""})\n")
 
-            val headers1 = response.headers()
-            for (i in 0 until headers1.size()) {
-                logStr.append("${headers1.name(i)}: ${headers1.value(i)}\n")
-            }
-
-            if (!HttpHeaders.hasBody(response)) {
-                logStr.append("<-- END HTTP\n")
-            } else if (bodyEncode(headers1)) {
-                logStr.append("<-- END HTTP (encoded body omitted)\n")
-            } else {
-                val source = responseBody.source()
-                source.request(Long.MAX_VALUE)
-                val buffer = source.buffer()
-
-                var charset = charsetUTF8
-                val contentType = responseBody.contentType()
-                if (null != contentType) {
-                    charset = contentType.charset(charsetUTF8)
+            if (logHeaders) {
+                val headers = response.headers()
+                for (i in 0 until headers.size()) {
+                    logStr.append("${headers.name(i)}: ${headers.value(i)}\n")
                 }
 
-                if (-1L != contentLength) {
-                    logStr.append("\n")
-                    val json = buffer.clone().readString(charset)
-                    val jsonFormat = json.jsonFormat()
-                    logStr.append("$json\n${
-                    if (jsonFormat.length > 200)
-                        "${jsonFormat.substring(0, 100)}\n\n The Json String was too long...\n\n ${
-                        jsonFormat.substring(jsonFormat.length - 100)}\n"
-                    else
-                        "$jsonFormat\n"}")
-                }
+                when {
+                    !logBody || !HttpHeaders.hasBody(response) ->
+                        logStr.append("<-- END HTTP\n")
+                    bodyEncoded(response.headers()) ->
+                        logStr.append("--< END HTTP (encoded body omitted")
+                    else -> {
+                        val source = responseBody.source()
+                        source.request(Long.MAX_VALUE)
+                        val buffer = Buffer()
 
-                logStr.append("<-- END HTTP (${buffer.size()}-byte body\n")
+                        var charset = UTF8
+                        val contentType = responseBody.contentType()
+                        if (contentType != null) {
+                            charset = contentType.charset(UTF8)
+                        }
+
+                        if (!isPlaintext(buffer)) {
+                            logStr.append("\n")
+                            logStr.append("<-- END HTTP (binary ${buffer.size()}-byte body omitted\n")
+                            logger.log(logStr.toString())
+                            return response
+                        }
+
+                        if (responseBody.contentLength() != 0L) {
+                            logStr.append("\n")
+                            val json = buffer.clone().readString(charset)
+                            val jsonFormat = json.jsonFormat()
+                            logStr.append("$json\n${
+                            if (jsonFormat.length > 200)
+                                "${jsonFormat.substring(0, 100)}\n\n The Json String was too long...\n\n ${
+                                jsonFormat.substring(jsonFormat.length - 100)}\n"
+                            else
+                                "$jsonFormat\n"}")
+                        }
+                        logStr.append("<-- END HTTP (${buffer.size()}-byte body)\n")
+                    }
+                }
             }
         }
-
-        Log.d("NET_INTERCEPTOR", logStr.toString())
+        logger.log(logStr.toString())
         return response
     }
+
+    /**
+     * 检测是否包含可读文本
+     *
+     * @return 是否包含
+     */
+    private fun isPlaintext(buffer: Buffer) =
+            try {
+                var plaintext = true
+                val prefix = Buffer()
+                val byteCount = if (buffer.size() < 64) buffer.size() else 64
+                buffer.copyTo(prefix, 0, byteCount)
+                for (i in 0..15) {
+                    if (prefix.exhausted()) {
+                        break
+                    }
+                    val codePoint = prefix.readUtf8CodePoint()
+                    if (Character.isISOControl(codePoint) && !Character.isWhitespace(codePoint)) {
+                        plaintext = false
+                    }
+                }
+                plaintext
+            } catch (e: EOFException) {
+                false // Truncated UTF-8 sequence.
+            }
+
+
+    private fun bodyEncoded(headers: Headers): Boolean {
+        val contentEncoding = headers.get("Content-Encoding")
+        return contentEncoding != null && !contentEncoding.equals("identity", ignoreCase = true)
+    }
+}
+
+/**
+ * 日志打印接口
+ */
+interface Logger {
+
+    /**
+     * 打印日志
+     *
+     * @param msg 日志文本
+     */
+    fun log(msg: String)
+}
+
+/**
+ * 枚举类，日志打印范围
+ */
+enum class Level {
+    /**
+     * 不打印日志
+     */
+    NONE,
+    /**
+     * 打印请求和响应行
+     */
+    BASIC,
+    /**
+     * 打印请求和响应行以及他们各自的头
+     */
+    HEADERS,
+    /**
+     * 打印请求和响应行、他们各自的头以及主体
+     */
+    BODY
 }

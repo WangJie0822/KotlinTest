@@ -1,9 +1,7 @@
 package com.wj.kotlintest.dagger.module
 
-import com.wj.kotlintest.net.LogInterceptor
-import com.wj.kotlintest.net.NetApi
-import com.wj.kotlintest.net.ParametersInterceptor
-import com.wj.kotlintest.net.UrlDefinition
+import com.wj.kotlintest.BuildConfig
+import com.wj.kotlintest.net.*
 import dagger.Module
 import dagger.Provides
 import okhttp3.OkHttpClient
@@ -22,8 +20,8 @@ class NetModule {
     @Singleton
     fun netClient(): NetApi {
         val okHttpClient = OkHttpClient.Builder()
-                .addInterceptor(ParametersInterceptor())
-                .addInterceptor(LogInterceptor())
+                .addInterceptor(ParamsInterceptor())
+                .addInterceptor(LogInterceptor(if(BuildConfig.DEBUG) Level.BODY else Level.NONE))
                 .build()
         val retrofit = Retrofit.Builder()
                 .baseUrl(UrlDefinition.BASE_URL)

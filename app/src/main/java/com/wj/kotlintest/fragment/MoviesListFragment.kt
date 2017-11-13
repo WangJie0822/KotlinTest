@@ -8,6 +8,8 @@ import com.wj.kotlintest.base.BaseFragment
 import com.wj.kotlintest.databinding.FragmentMoviesListBinding
 import com.wj.kotlintest.entity.MoviesEntity
 import com.wj.kotlintest.entity.MoviesListEntity
+import com.wj.kotlintest.flag.TYPE_HIGHEST_RATE
+import com.wj.kotlintest.flag.TYPE_POPULAR
 import com.wj.kotlintest.handler.MoviesItemHandler
 import com.wj.kotlintest.mvp.MoviesListPresenter
 import com.wj.kotlintest.mvp.MoviesListView
@@ -25,12 +27,6 @@ class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListB
     lateinit var adapter: MoviesListAdapter
 
     companion object {
-
-        /** 电影列表类型 - 高评分 */
-        val TYPE_HIGHEST_RATE = 0x2342
-        /** 电影列表类型 - 最流行 */
-        val TYPE_POPULAR = 0x2343
-
         /**
          * 创建对应 Fragment 对象
          *

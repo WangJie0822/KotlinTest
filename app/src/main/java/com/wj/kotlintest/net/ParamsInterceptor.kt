@@ -8,7 +8,7 @@ import okhttp3.Response
 /**
  * 公共参数添加拦截器
  */
-class ParametersInterceptor() : Interceptor {
+class ParamsInterceptor : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
 
