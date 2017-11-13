@@ -1,7 +1,6 @@
 package com.wj.kotlintest.net
 
 import com.wj.kotlintest.expanding.jsonFormat
-import com.wj.kotlintest.net.LogInterceptor.Companion.DEFAULT_LOGGER
 import okhttp3.Headers
 import okhttp3.Interceptor
 import okhttp3.Protocol
@@ -17,19 +16,13 @@ import java.util.concurrent.TimeUnit
  * 网络请求拦截器，打印网络请求相关信息
  *
  * @param level 日志打印等级[Level], 默认[Level.BASIC]
- * @param logger 日志打印接口[Logger], 默认实现[DEFAULT_LOGGER]
+ * @param logger 日志打印接口[Logger], 默认实现[Logger.DEFAULT]
  */
-class LogInterceptor(var level: Level = Level.BASIC, private val logger: Logger = DEFAULT_LOGGER) : Interceptor {
+class LogInterceptor(private var level: Level = Level.BASIC, private val logger: Logger = Logger.DEFAULT) : Interceptor {
 
     companion object {
         /** 默认字符集 UTF-8 */
         private val UTF8 = Charset.forName("UTF-8")
-        /** 默认日志打印 */
-        private val DEFAULT_LOGGER = object : Logger {
-            override fun log(msg: String) {
-                Platform.get().log(Platform.INFO, msg, null)
-            }
-        }
     }
 
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -222,6 +215,16 @@ interface Logger {
      * @param msg 日志文本
      */
     fun log(msg: String)
+
+    companion object {
+        /** 默认日志打印 */
+        val DEFAULT: Logger = object : Logger {
+            override fun log(msg: String) {
+                Platform.get().log(Platform.INFO, msg, null)
+            }
+        }
+    }
+
 }
 
 /**
