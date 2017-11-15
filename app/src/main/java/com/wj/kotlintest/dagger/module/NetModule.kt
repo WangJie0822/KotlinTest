@@ -20,7 +20,7 @@ class NetModule {
     @Singleton
     fun netClient(): NetApi {
         val okHttpClient = OkHttpClient.Builder()
-                .addInterceptor(ParamsInterceptor())
+                .addInterceptor(ParamsInterceptor(BuildConfig.DEBUG))
                 .addInterceptor(LogInterceptor(if(BuildConfig.DEBUG) Level.BODY else Level.NONE))
                 .build()
         val retrofit = Retrofit.Builder()

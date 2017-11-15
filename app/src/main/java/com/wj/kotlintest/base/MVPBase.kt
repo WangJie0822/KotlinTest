@@ -1,6 +1,7 @@
 package com.wj.kotlintest.base
 
 import com.wj.kotlintest.constant.Constants
+import com.wj.kotlintest.net.NetApi
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
@@ -66,5 +67,69 @@ open class BaseMVPPresenter<V : BaseMVPView, M : BaseMVPModule> {
             disposables.dispose()
         }
     }
-
 }
+
+/**
+ * MVP Module基类
+ */
+open class BaseMVPModule @Inject constructor() {
+
+    @Inject
+    lateinit var netClient: NetApi
+}
+
+/**
+ * MVP View基类
+ */
+interface BaseMVPView {
+
+    /**
+     * 网络请求结束
+     */
+    fun onNetFinished()
+
+    /**
+     * 网络故障
+     */
+    fun onNetError()
+
+    /**
+     * 无数据
+     */
+    fun onNoData()
+
+    /**
+     * 加载中
+     */
+    fun onLoading()
+}
+
+/**
+ * 网络请求结束回调接口
+ *
+ * @param E 请求成功返回数据类型
+ * @author 王杰
+ */
+interface OnNetFinishedListener<in E : BaseEntity> {
+
+    /**
+     * 网络请求成功
+     *
+     * @param entity 请求返回数据
+     */
+    fun onSuccess(entity: E)
+
+    /**
+     * 请求失败
+     *
+     * @param fail 失败信息
+     */
+    fun onFail(fail: Throwable)
+}
+
+/**
+ * 空白Presenter
+ */
+class BlankPresenter @Inject constructor() : BaseMVPPresenter<BaseMVPView, BaseMVPModule>()
+
+

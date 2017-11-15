@@ -8,14 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import com.wj.kotlintest.BR
 
-
 /**
  * RecyclerView 适配器基类
  *
- * @param <E>  数据类型
- * @param <VH> ViewHolder 类型，继承 BaseRvViewHolder
- * @param <H>  事件处理类型 Handler
- * @param <DB>  DataBinding 类型，与 VH 一致 继承 ViewDataBinding
+ * @param E  数据类型
+ * @param VH ViewHolder 类型，继承 [BaseRvViewHolder]
+ * @param H  事件处理类型 Handler
+ * @param DB  DataBinding 类型，与 VH 一致 继承 [ViewDataBinding]
  */
 abstract class BaseRvAdapter<E, VH : BaseRvViewHolder<*, *>, H, in DB : ViewDataBinding> : RecyclerView.Adapter<VH>() {
 
@@ -194,5 +193,24 @@ abstract class BaseRvAdapter<E, VH : BaseRvViewHolder<*, *>, H, in DB : ViewData
      */
     protected fun createViewHolder(view: View): VH? {
         return null
+    }
+}
+
+/**
+ * ViewHolder基类
+ */
+open class BaseRvViewHolder<DB : ViewDataBinding, E> : RecyclerView.ViewHolder {
+
+    lateinit var mBinding: DB
+
+    constructor(view: View) : super(view)
+
+    constructor(binding: DB) : super(binding.root) {
+        mBinding = binding
+    }
+
+    open fun bindData(entity: E) {
+        mBinding.setVariable(BR.item, entity)
+        mBinding.executePendingBindings()
     }
 }

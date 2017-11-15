@@ -6,11 +6,11 @@ import android.support.v4.view.ViewPager
 import com.wj.kotlintest.R
 import com.wj.kotlintest.adapter.FragVpAdapter
 import com.wj.kotlintest.base.BaseActivity
+import com.wj.kotlintest.base.BlankPresenter
 import com.wj.kotlintest.databinding.ActivityMainBinding
 import com.wj.kotlintest.flag.TYPE_HIGHEST_RATE
 import com.wj.kotlintest.flag.TYPE_POPULAR
 import com.wj.kotlintest.fragment.MoviesListFragment
-import com.wj.kotlintest.mvp.BlankPresenter
 
 /**
  * 主界面

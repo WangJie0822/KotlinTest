@@ -1,9 +1,11 @@
-package com.wj.kotlintest.utils.statusbar
+package com.wj.kotlintest.utils
 
 import android.app.Activity
 import android.content.Context
 import android.os.Build
 import android.support.annotation.ColorRes
+import android.util.AttributeSet
+import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.LinearLayout
@@ -121,4 +123,9 @@ object StatusBarUtil {
         blue = (blue * a + 0.5).toInt()
         return 0xff shl 24 or (red shl 16) or (green shl 8) or blue
     }
+}
+
+class StatusBarView : View {
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {}
+    constructor(context: Context) : super(context) {}
 }

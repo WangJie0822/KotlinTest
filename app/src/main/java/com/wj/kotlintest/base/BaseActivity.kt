@@ -12,7 +12,7 @@ import com.wj.kotlintest.R
 import com.wj.kotlintest.databinding.LayoutBaseBinding
 import com.wj.kotlintest.databinding.RootHandler
 import com.wj.kotlintest.utils.AppManager
-import com.wj.kotlintest.utils.statusbar.StatusBarUtil
+import com.wj.kotlintest.utils.StatusBarUtil
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 

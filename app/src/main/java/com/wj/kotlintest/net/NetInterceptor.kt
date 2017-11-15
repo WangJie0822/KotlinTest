@@ -1,5 +1,7 @@
 package com.wj.kotlintest.net
 
+import android.util.Log
+import com.wj.kotlintest.BuildConfig
 import com.wj.kotlintest.expanding.jsonFormat
 import okhttp3.Headers
 import okhttp3.Interceptor
@@ -11,6 +13,41 @@ import okio.Buffer
 import java.io.EOFException
 import java.nio.charset.Charset
 import java.util.concurrent.TimeUnit
+
+/**
+ * 公共参数添加拦截器
+ */
+class ParamsInterceptor(private val log: Boolean = false) : Interceptor {
+
+    override fun intercept(chain: Interceptor.Chain): Response {
+
+        if (log) {
+            // 日志拦截
+            Log.d("NET_INTERCEPTOR", "---------->> Intercept to add parameters <<----------")
+        }
+
+        // 获取请求信息
+        val oldRequest = chain.request()
+
+        // 添加新的参数
+        val url = oldRequest.url()
+                .newBuilder()
+                .scheme(oldRequest.url().scheme())
+                .host(oldRequest.url().host())
+                .addQueryParameter("version", BuildConfig.VERSION_NAME)         // 版本名
+                .addQueryParameter("platform", "android")                // 应用平台
+                .addQueryParameter("imei", "")                           // 手机IMEI
+                .build()
+
+        // 生成新的请求
+        val request = oldRequest.newBuilder()
+                .method(oldRequest.method(), oldRequest.body())
+                .url(url)
+                .build()
+
+        return chain.proceed(request)
+    }
+}
 
 /**
  * 网络请求拦截器，打印网络请求相关信息

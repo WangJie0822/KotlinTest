@@ -10,8 +10,6 @@ import javax.inject.Inject
 
 /**
  * 电影相关 Module
- *
- * @author 王杰
  */
 class MoviesModule @Inject constructor() : BaseMVPModule() {
 
