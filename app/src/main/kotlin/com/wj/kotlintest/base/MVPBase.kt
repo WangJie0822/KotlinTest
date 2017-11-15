@@ -1,6 +1,6 @@
 package com.wj.kotlintest.base
 
-import com.wj.kotlintest.constant.Constants
+import com.wj.kotlintest.constans.Constants
 import com.wj.kotlintest.net.NetApi
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable

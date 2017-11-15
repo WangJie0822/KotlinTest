@@ -3,6 +3,7 @@ package com.wj.kotlintest.fragment
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import com.wj.kotlintest.R
+import com.wj.kotlintest.activity.MoviesDetailsActivity
 import com.wj.kotlintest.adapter.MoviesListAdapter
 import com.wj.kotlintest.base.BaseFragment
 import com.wj.kotlintest.databinding.FragmentMoviesListBinding
@@ -87,6 +88,7 @@ class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListB
     inner class HighestRatedHandler : MoviesItemHandler {
         override fun onMoviesItemClick(item: MoviesEntity) {
             item.title?.let { ToastUtil.show(it) }
+            MoviesDetailsActivity.actionStart(mContext)
         }
     }
 }

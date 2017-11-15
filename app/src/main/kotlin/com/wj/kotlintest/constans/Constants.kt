@@ -1,4 +1,4 @@
-package com.wj.kotlintest.constant
+package com.wj.kotlintest.constans
 
 
 /**

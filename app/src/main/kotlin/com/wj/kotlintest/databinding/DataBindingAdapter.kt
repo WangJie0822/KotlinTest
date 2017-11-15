@@ -29,7 +29,7 @@ object DataBindingAdapter {
      * @param imgUrl 图片 Url
      */
     @BindingAdapter("img_url")
-    fun headImg(iv: ImageView, imgUrl: String) {
+    fun imgUrl(iv: ImageView, imgUrl: String) {
         GlideApp.with(iv.context)
                 .load(imgUrl)
                 .into(iv)
@@ -55,8 +55,8 @@ object DataBindingAdapter {
     @BindingAdapter("path_img")
     fun pathImg(iv: ImageView, imgPath: String) {
         try {
-            val `in` = iv.context.assets.open(imgPath)
-            val bmp = BitmapFactory.decodeStream(`in`)
+            val input = iv.context.assets.open(imgPath)
+            val bmp = BitmapFactory.decodeStream(input)
             iv.setImageBitmap(bmp)
         } catch (e: Exception) {
             e.printStackTrace()

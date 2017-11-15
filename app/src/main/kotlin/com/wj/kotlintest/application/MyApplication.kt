@@ -25,10 +25,8 @@ class MyApplication : DaggerApplication() {
 
         INSTANCE = this
 
-        DataBindingUtil.setDefaultComponent(object : DataBindingComponent {
-            override fun getDataBindingAdapter(): DataBindingAdapter {
-                return DataBindingAdapter
-            }
+        DataBindingUtil.setDefaultComponent(object : DataBindingComponent{
+            override fun getDataBindingAdapter() = DataBindingAdapter
         })
 
     }

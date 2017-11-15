@@ -4,4 +4,4 @@
 build
 /local.properties
 /signing.properties
-findbugs-android-exclude.xml
+/findbugs-android-exclude.xml
