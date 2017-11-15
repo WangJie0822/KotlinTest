@@ -1,7 +1,7 @@
 *.iml
 .gradle
+.idea
+build
 /local.properties
-/build
-signing.properties
+/signing.properties
 findbugs-android-exclude.xml
-/.idea/
