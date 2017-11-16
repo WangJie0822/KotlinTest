@@ -15,6 +15,7 @@ import com.wj.kotlintest.handler.MoviesItemHandler
 import com.wj.kotlintest.mvp.MoviesListPresenter
 import com.wj.kotlintest.mvp.MoviesListView
 import com.wj.kotlintest.utils.ToastUtil
+import com.wj.swipetoloadlayout.OnRefreshListener
 import javax.inject.Inject
 
 /**
@@ -64,8 +65,10 @@ class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListB
             }
         }
 
-        mBinding.swipe.setOnRefreshListener {
-           initData()
+        mBinding.swipe.mRefreshListener = object : OnRefreshListener {
+            override fun onRefresh() {
+                initData()
+            }
         }
 
         onLoading()
