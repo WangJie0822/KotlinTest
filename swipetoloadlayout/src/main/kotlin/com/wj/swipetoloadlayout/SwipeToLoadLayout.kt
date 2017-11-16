@@ -256,7 +256,53 @@ class SwipeToLoadLayout : ViewGroup {
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
-
+        val typeArray = context.obtainStyledAttributes(attrs, R.styleable.SwipeToLoadLayout, defStyleAttr, 0)
+        try {
+            (0 until typeArray.indexCount)
+                    .map { typeArray.getIndex(it) }
+                    .forEach {
+                        when (it) {
+                            R.styleable.SwipeToLoadLayout_refresh_enabled ->
+                                mRefreshEnabled = typeArray.getBoolean(it, true)
+                            R.styleable.SwipeToLoadLayout_load_more_enabled ->
+                                mLoadMoreEnabled = typeArray.getBoolean(it, true)
+                            R.styleable.SwipeToLoadLayout_swipe_style ->
+                                mStyle = typeArray.getInt(it, STYLE.CLASSIC)
+                            R.styleable.SwipeToLoadLayout_drag_ratio ->
+                                mDragRatio = typeArray.getFloat(it, DEFAULT_DRAG_RATIO)
+                            R.styleable.SwipeToLoadLayout_refresh_final_drag_offset ->
+                                mRefreshFinalDragOffset = typeArray.getDimensionPixelOffset(it, 0).toFloat()
+                            R.styleable.SwipeToLoadLayout_load_more_final_drag_offset ->
+                                mLoadMoreFinalDragOffset = typeArray.getDimensionPixelOffset(it, 0).toFloat()
+                            R.styleable.SwipeToLoadLayout_refresh_trigger_offset ->
+                                mRefreshTriggerOffset = typeArray.getDimensionPixelOffset(it, 0).toFloat()
+                            R.styleable.SwipeToLoadLayout_load_more_trigger_offset ->
+                                mLoadMoreTriggerOffset = typeArray.getDimensionPixelOffset(it, 0).toFloat()
+                            R.styleable.SwipeToLoadLayout_swiping_to_refresh_to_default_scrolling_duration ->
+                                mSwipingToRefreshToDefaultScrollingDuration = typeArray.getInt(it, DEFAULT_SWIPING_TO_REFRESH_TO_DEFAULT_SCROLLING_DURATION)
+                            R.styleable.SwipeToLoadLayout_release_to_refreshing_scrolling_duration ->
+                                mReleaseToRefreshToRefreshingScrollingDuration = typeArray.getInt(it, DEFAULT_RELEASE_TO_REFRESHING_SCROLLING_DURATION)
+                            R.styleable.SwipeToLoadLayout_refresh_complete_delay_duration ->
+                                mRefreshCompleteDelayDuration = typeArray.getInt(it, DEFAULT_REFRESH_COMPLETE_DELAY_DURATION)
+                            R.styleable.SwipeToLoadLayout_refresh_complete_to_default_scrolling_duration ->
+                                mRefreshCompleteToDefaultScrollingDuration = typeArray.getInt(it, DEFAULT_REFRESH_COMPLETE_TO_DEFAULT_SCROLLING_DURATION)
+                            R.styleable.SwipeToLoadLayout_default_to_refreshing_scrolling_duration ->
+                                mDefaultToRefreshingScrollingDuration = typeArray.getInt(it, DEFAULT_DEFAULT_TO_REFRESHING_SCROLLING_DURATION)
+                            R.styleable.SwipeToLoadLayout_swiping_to_load_more_to_default_scrolling_duration ->
+                                mSwipingToLoadMoreToDefaultScrollingDuration = typeArray.getInt(it, DEFAULT_SWIPING_TO_LOAD_MORE_TO_DEFAULT_SCROLLING_DURATION)
+                            R.styleable.SwipeToLoadLayout_release_to_loading_more_scrolling_duration ->
+                                mReleaseToLoadMoreToLoadingMoreScrollingDuration = typeArray.getInt(it, DEFAULT_RELEASE_TO_LOADING_MORE_SCROLLING_DURATION)
+                            R.styleable.SwipeToLoadLayout_load_more_complete_delay_duration ->
+                                mLoadMoreCompleteDelayDuration = typeArray.getInt(it, DEFAULT_LOAD_MORE_COMPLETE_DELAY_DURATION)
+                            R.styleable.SwipeToLoadLayout_load_more_complete_to_default_scrolling_duration ->
+                                mLoadMoreCompleteToDefaultScrollingDuration = typeArray.getInt(it, DEFAULT_LOAD_MORE_COMPLETE_TO_DEFAULT_SCROLLING_DURATION)
+                            R.styleable.SwipeToLoadLayout_default_to_loading_more_scrolling_duration ->
+                                mDefaultToLoadingMoreScrollingDuration = typeArray.getInt(it, DEFAULT_DEFAULT_TO_LOADING_MORE_SCROLLING_DURATION)
+                        }
+                    }
+        } finally {
+            typeArray.recycle()
+        }
         mTouchSlop = ViewConfiguration.get(context).scaledTouchSlop
         mAutoScroller = AutoScroller()
     }
