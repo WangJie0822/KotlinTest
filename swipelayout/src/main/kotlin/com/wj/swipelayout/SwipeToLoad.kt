@@ -1,4 +1,4 @@
-package com.wj.swipetoloadlayout
+package com.wj.swipelayout
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -376,15 +376,15 @@ open class SwipeToLoadLayout @JvmOverloads constructor(context: Context, attrs: 
     }
 
     override fun generateDefaultLayoutParams(): ViewGroup.LayoutParams {
-        return SwipeToLoadLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
+        return LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
     }
 
     override fun generateLayoutParams(p: ViewGroup.LayoutParams): ViewGroup.LayoutParams {
-        return SwipeToLoadLayout.LayoutParams(p)
+        return LayoutParams(p)
     }
 
     override fun generateLayoutParams(attrs: AttributeSet): ViewGroup.LayoutParams {
-        return SwipeToLoadLayout.LayoutParams(context, attrs)
+        return LayoutParams(context, attrs)
     }
 
     /**
@@ -1074,23 +1074,23 @@ object STATUS {
     val STATUS_RELEASE_TO_LOAD_MORE = 2
     val STATUS_LOADING_MORE = 3
 
-    fun isRefreshing(status: Int) = status == STATUS.STATUS_REFRESHING
+    fun isRefreshing(status: Int) = status == STATUS_REFRESHING
 
-    fun isLoadingMore(status: Int) = status == STATUS.STATUS_LOADING_MORE
+    fun isLoadingMore(status: Int) = status == STATUS_LOADING_MORE
 
-    fun isReleaseToRefresh(status: Int) = status == STATUS.STATUS_RELEASE_TO_REFRESH
+    fun isReleaseToRefresh(status: Int) = status == STATUS_RELEASE_TO_REFRESH
 
-    fun isReleaseToLoadMore(status: Int) = status == STATUS.STATUS_RELEASE_TO_LOAD_MORE
+    fun isReleaseToLoadMore(status: Int) = status == STATUS_RELEASE_TO_LOAD_MORE
 
-    fun isSwipingToRefresh(status: Int) = status == STATUS.STATUS_SWIPING_TO_REFRESH
+    fun isSwipingToRefresh(status: Int) = status == STATUS_SWIPING_TO_REFRESH
 
-    fun isSwipingToLoadMore(status: Int) = status == STATUS.STATUS_SWIPING_TO_LOAD_MORE
+    fun isSwipingToLoadMore(status: Int) = status == STATUS_SWIPING_TO_LOAD_MORE
 
-    fun isRefreshStatus(status: Int) = status < STATUS.STATUS_DEFAULT
+    fun isRefreshStatus(status: Int) = status < STATUS_DEFAULT
 
-    fun isLoadMoreStatus(status: Int) = status > STATUS.STATUS_DEFAULT
+    fun isLoadMoreStatus(status: Int) = status > STATUS_DEFAULT
 
-    fun isStatusDefault(status: Int) = status == STATUS.STATUS_DEFAULT
+    fun isStatusDefault(status: Int) = status == STATUS_DEFAULT
 
     fun getStatus(status: Int) = when (status) {
         STATUS_REFRESHING -> "status_refreshing"

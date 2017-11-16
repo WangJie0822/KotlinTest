@@ -2,12 +2,12 @@
              xmlns:tools="http://schemas.android.com/tools"
              tools:context="com.wj.kotlintest.fragment.MoviesListFragment">
 
-    <com.wj.swipetoloadlayout.SwipeToLoadLayout
+    <com.wj.swipelayout.SwipeToLoadLayout
         android:layout_width="match_parent"
         android:id="@+id/swipe"
         android:layout_height="match_parent">
 
-        <com.wj.swipetoloadlayout.RefreshView
+        <com.wj.swipelayout.RefreshView
             android:id="@id/swipe_refresh_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
@@ -17,6 +17,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
 
-    </com.wj.swipetoloadlayout.SwipeToLoadLayout>
+    </com.wj.swipelayout.SwipeToLoadLayout>
 
 </layout>

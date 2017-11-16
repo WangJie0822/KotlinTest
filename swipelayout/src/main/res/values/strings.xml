@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SwipeToLoadLayout</string>
+    <string name="app_name">swipelayout</string>
 
     <string name="pull_to_refresh">下拉刷新</string>
     <string name="pull_to_load_more">上拉加载更多</string>

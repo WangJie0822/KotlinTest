@@ -1,4 +1,4 @@
-package com.wj.swipetoloadlayout
+package com.wj.swipelayout
 
 import android.content.Context
 import android.graphics.drawable.AnimationDrawable

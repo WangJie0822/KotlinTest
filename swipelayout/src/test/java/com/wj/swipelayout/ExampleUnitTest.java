@@ -1,4 +1,4 @@
-package com.wj.swipetoloadlayout;
+package com.wj.swipelayout;
 
 import org.junit.Test;
 

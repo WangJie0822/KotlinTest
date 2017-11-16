@@ -15,7 +15,7 @@ import com.wj.kotlintest.handler.MoviesItemHandler
 import com.wj.kotlintest.mvp.MoviesListPresenter
 import com.wj.kotlintest.mvp.MoviesListView
 import com.wj.kotlintest.utils.ToastUtil
-import com.wj.swipetoloadlayout.OnRefreshListener
+import com.wj.swipelayout.OnRefreshListener
 import javax.inject.Inject
 
 /**
