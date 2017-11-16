@@ -7,7 +7,7 @@
         android:id="@+id/swipe"
         android:layout_height="match_parent">
 
-        <com.wj.swipetoloadlayout.view.RefreshView
+        <com.wj.swipetoloadlayout.RefreshView
             android:id="@id/swipe_refresh_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>

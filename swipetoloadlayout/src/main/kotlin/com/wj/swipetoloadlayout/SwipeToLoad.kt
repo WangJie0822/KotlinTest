@@ -1,8 +1,7 @@
 package com.wj.swipetoloadlayout
 
+import android.annotation.SuppressLint
 import android.content.Context
-import android.support.v4.view.MotionEventCompat
-import android.support.v4.view.ViewCompat
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
@@ -12,14 +11,14 @@ import android.view.ViewGroup
 import android.widget.Scroller
 
 /**
- *
- *
- * @author 王杰
+ * 下拉刷新、上拉加载更多控件
  */
-class SwipeToLoadLayout : ViewGroup {
+@Suppress("unused", "MemberVisibilityCanPrivate")
+open class SwipeToLoadLayout @JvmOverloads constructor(context: Context, attrs: AttributeSet?=null, defStyleAttr: Int=0)
+    : ViewGroup(context,attrs, defStyleAttr) {
 
     companion object {
-        val TAG = SwipeToLoadLayout::class.java.simpleName
+        val TAG = SwipeToLoadLayout::class.java.simpleName!!
         val DEFAULT_SWIPING_TO_REFRESH_TO_DEFAULT_SCROLLING_DURATION = 200
         val DEFAULT_RELEASE_TO_REFRESHING_SCROLLING_DURATION = 200
         val DEFAULT_REFRESH_COMPLETE_DELAY_DURATION = 300
@@ -35,227 +34,13 @@ class SwipeToLoadLayout : ViewGroup {
         val INVALID_COORDINATE = -1
     }
 
-    /** 标记-是否打印日志 */
-    var mDebug = false
-
     /** 滚动处理 */
-    val mAutoScroller: AutoScroller
-
-    /** 刷新监听 */
-    var mRefreshListener: OnRefreshListener? = null
-    /** 上拉加载监听*/
-    var mLoadMoreListener: OnLoadMoreListener? = null
-
-    /** 下拉刷新控件 */
-    var mHeaderView: View? = null
-    /** 目标控件 */
-    var mTargetView: View? = null
-    /** 上拉加载控件 */
-    var mFooterView: View? = null
-
-    /** 标记-能否下拉刷新 */
-    private var mRefreshEnabled = true
-    /** 标记-能否上拉加载 */
-    private var mLoadMoreEnabled = true
-
-    /** 下拉刷新控件高度 */
-    var mHeaderHeight = 0
-    /** 上拉加载控件高度 */
-    var mFooterHeight = 0
+    private val mAutoScroller: AutoScroller
 
     /** 触摸事件的极限值 */
     private val mTouchSlop: Int
 
-    /** 触发刷新偏移量 */
-    var mRefreshTriggerOffset = 0f
-    /** 触发加载偏移量 */
-    var mLoadMoreTriggerOffset = 0f
-
-    /** 标记-是否有下拉刷新控件 */
-    var mHasHeaderView = false
-    /** 标记-是否有上拉加载控件 */
-    var mHasFooterView = false
-
-    /** 标记-是否自动刷新 */
-    var mAutoLoading: Boolean = false
-
-    /** 下拉刷新控件偏移量 */
-    var mHeaderOffset = 0
-    /** 目标控件偏移量 */
-    var mTargetOffset = 0
-    /** 上拉加载控件偏移量 */
-    var mFooterOffset = 0
-
-    /** 默认类型[STYLE.CLASSIC]*/
-    var mStyle = STYLE.CLASSIC
-
-    /** SwipeToLoadLayout 当前状态 */
-    var mStatus = STATUS.STATUS_DEFAULT
-        set(value) {
-            field = value
-            if (mDebug) {
-                STATUS.printStatus(field)
-            }
-        }
-
-    /** 触摸事件开始 x 坐标 */
-    private var mInitDownX = 0f
-
-    /** 触摸事件开始 y 坐标 */
-    private var mInitDownY = 0f
-
-    /** 触摸事件结束 x 坐标 */
-    private var mLastX = 0f
-
-    /** 触摸事件结束 y 坐标 */
-    private var mLastY = 0f
-
-    /** 触摸事件 id */
-    private var mActivePointerId = 0
-
-    private var mDragRatio = DEFAULT_DRAG_RATIO
-
-    /**
-     * **ATTRIBUTE:**
-     * the max value of top offset
-     */
-    private var mRefreshFinalDragOffset: Float = 0.toFloat()
-
-    /**
-     * **ATTRIBUTE:**
-     * the max value of bottom offset
-     */
-    private var mLoadMoreFinalDragOffset: Float = 0.toFloat()
-
-    /** 状态 滑动刷新 -> 默认 持续时间 */
-    private var mSwipingToRefreshToDefaultScrollingDuration = DEFAULT_SWIPING_TO_REFRESH_TO_DEFAULT_SCROLLING_DURATION
-
-    /** 状态 释放刷新 -> 刷新 持续时间 */
-    private var mReleaseToRefreshToRefreshingScrollingDuration = DEFAULT_RELEASE_TO_REFRESHING_SCROLLING_DURATION
-
-    /** 刷新完成延时 */
-    private var mRefreshCompleteDelayDuration = DEFAULT_REFRESH_COMPLETE_DELAY_DURATION
-
-    /** 状态 刷新完成 -> 默认 持续时间 */
-    private var mRefreshCompleteToDefaultScrollingDuration = DEFAULT_REFRESH_COMPLETE_TO_DEFAULT_SCROLLING_DURATION
-
-    /** 状态 自动刷新开启 默认 -> 刷新 持续时间 */
-    private var mDefaultToRefreshingScrollingDuration = DEFAULT_DEFAULT_TO_REFRESHING_SCROLLING_DURATION
-
-    /** 状态 释放加载更多 -> 加载更多 持续时间 */
-    private var mReleaseToLoadMoreToLoadingMoreScrollingDuration = DEFAULT_RELEASE_TO_LOADING_MORE_SCROLLING_DURATION
-
-    /** 加载更多完成延时 */
-    private var mLoadMoreCompleteDelayDuration = DEFAULT_LOAD_MORE_COMPLETE_DELAY_DURATION
-
-    /** 状态 加载更多完成 -> 默认 持续时间 */
-    private var mLoadMoreCompleteToDefaultScrollingDuration = DEFAULT_LOAD_MORE_COMPLETE_TO_DEFAULT_SCROLLING_DURATION
-
-    /** 状态 滑动加载更多 -> 默认 持续时间 */
-    private var mSwipingToLoadMoreToDefaultScrollingDuration = DEFAULT_SWIPING_TO_LOAD_MORE_TO_DEFAULT_SCROLLING_DURATION
-
-    /** 状态 自动加载更多开启 默认 -> 加载更多 持续时间 */
-    private var mDefaultToLoadingMoreScrollingDuration = DEFAULT_DEFAULT_TO_LOADING_MORE_SCROLLING_DURATION
-
-    /** 刷新回调 */
-    val mRefreshCallback: RefreshCallback = object : RefreshCallback() {
-
-        override fun onPrepare() {
-            if (mHeaderView != null && mHeaderView is SwipeTrigger && STATUS.isStatusDefault(mStatus)) {
-                mHeaderView?.visibility = View.VISIBLE
-                (mHeaderView as SwipeTrigger).onPrepare()
-            }
-        }
-
-        override fun onMove(y: Int, isComplete: Boolean, automatic: Boolean) {
-            if (mHeaderView != null && mHeaderView is SwipeTrigger && STATUS.isRefreshStatus(mStatus)) {
-                if (mHeaderView?.visibility != View.VISIBLE) {
-                    mHeaderView?.visibility = View.VISIBLE
-                }
-                (mHeaderView as SwipeTrigger).onMove(y, isComplete, automatic)
-            }
-        }
-
-        override fun onRelease() {
-            if (mHeaderView != null && mHeaderView is SwipeTrigger && STATUS.isReleaseToRefresh(mStatus)) {
-                (mHeaderView as SwipeTrigger).onRelease()
-            }
-        }
-
-        override fun onRefresh() {
-            if (mHeaderView != null && STATUS.isRefreshing(mStatus)) {
-                if (mHeaderView is SwipeRefreshTrigger) {
-                    (mHeaderView as SwipeRefreshTrigger).onRefresh()
-                }
-                mRefreshListener?.onRefresh()
-            }
-        }
-
-        override fun onComplete() {
-            if (mHeaderView != null && mHeaderView is SwipeTrigger) {
-                (mHeaderView as SwipeTrigger).onComplete()
-            }
-        }
-
-        override fun onReset() {
-            if (mHeaderView != null && mHeaderView is SwipeTrigger && STATUS.isStatusDefault(mStatus)) {
-                (mHeaderView as SwipeTrigger).onReset()
-                mHeaderView?.setVisibility(View.GONE)
-            }
-        }
-    }
-
-    /** 上拉加载回调 */
-    val mLoadMoreCallback: LoadMoreCallback = object : LoadMoreCallback() {
-
-        override fun onPrepare() {
-            if (mFooterView != null && mFooterView is SwipeTrigger && STATUS.isStatusDefault(mStatus)) {
-                mFooterView?.setVisibility(View.VISIBLE)
-                (mFooterView as SwipeTrigger).onPrepare()
-            }
-        }
-
-        override fun onMove(y: Int, isComplete: Boolean, automatic: Boolean) {
-            if (mFooterView != null && mFooterView is SwipeTrigger && STATUS.isLoadMoreStatus(mStatus)) {
-                if (mFooterView?.visibility != View.VISIBLE) {
-                    mFooterView?.visibility = View.VISIBLE
-                }
-                (mFooterView as SwipeTrigger).onMove(y, isComplete, automatic)
-            }
-        }
-
-        override fun onRelease() {
-            if (mFooterView != null && mFooterView is SwipeTrigger && STATUS.isReleaseToLoadMore(mStatus)) {
-                (mFooterView as SwipeTrigger).onRelease()
-            }
-        }
-
-        override fun onLoadMore() {
-            if (mFooterView != null && STATUS.isLoadingMore(mStatus)) {
-                if (mFooterView is SwipeLoadMoreTrigger) {
-                    (mFooterView as SwipeLoadMoreTrigger).onLoadMore()
-                }
-                mLoadMoreListener?.onLoadMore()
-            }
-        }
-
-        override fun onComplete() {
-            if (mFooterView != null && mFooterView is SwipeTrigger) {
-                (mFooterView as SwipeTrigger).onComplete()
-            }
-        }
-
-        override fun onReset() {
-            if (mFooterView != null && mFooterView is SwipeTrigger && STATUS.isStatusDefault(mStatus)) {
-                (mFooterView as SwipeTrigger).onReset()
-                mFooterView?.visibility = View.GONE
-            }
-        }
-    }
-
-    constructor(context: Context) : this(context, null)
-    constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+    init {
         val typeArray = context.obtainStyledAttributes(attrs, R.styleable.SwipeToLoadLayout, defStyleAttr, 0)
         try {
             (0 until typeArray.indexCount)
@@ -305,6 +90,212 @@ class SwipeToLoadLayout : ViewGroup {
         }
         mTouchSlop = ViewConfiguration.get(context).scaledTouchSlop
         mAutoScroller = AutoScroller()
+    }
+
+    /** 标记-是否打印日志 */
+    var mDebug = false
+
+    /** 刷新监听 */
+    var refreshListener: OnRefreshListener? = null
+    /** 上拉加载监听*/
+    var loadMoreListener: OnLoadMoreListener? = null
+
+    /** 下拉刷新控件 */
+    var mHeaderView: View? = null
+    /** 目标控件 */
+    var mTargetView: View? = null
+    /** 上拉加载控件 */
+    var mFooterView: View? = null
+
+    /** 标记-能否下拉刷新 */
+    private var mRefreshEnabled = true
+    /** 标记-能否上拉加载 */
+    private var mLoadMoreEnabled = true
+
+    /** 下拉刷新控件高度 */
+    private var mHeaderHeight = 0
+    /** 上拉加载控件高度 */
+    private var mFooterHeight = 0
+
+    /** 触发刷新偏移量 */
+    private var mRefreshTriggerOffset = 0f
+    /** 触发加载偏移量 */
+    private var mLoadMoreTriggerOffset = 0f
+
+    /** 标记-是否有下拉刷新控件 */
+    private var mHasHeaderView = false
+    /** 标记-是否有上拉加载控件 */
+    private var mHasFooterView = false
+
+    /** 标记-是否自动刷新 */
+    private var mAutoLoading: Boolean = false
+
+    /** 下拉刷新控件偏移量 */
+    private var mHeaderOffset = 0
+    /** 目标控件偏移量 */
+    private var mTargetOffset = 0
+    /** 上拉加载控件偏移量 */
+    private var mFooterOffset = 0
+
+    /** 默认类型[STYLE.CLASSIC]*/
+    private var mStyle = STYLE.CLASSIC
+
+    /** SwipeToLoadLayout 当前状态 */
+    var mStatus = STATUS.STATUS_DEFAULT
+        set(value) {
+            field = value
+            if (mDebug) {
+                STATUS.printStatus(field)
+            }
+        }
+
+    /** 触摸事件开始 x 坐标 */
+    private var mInitDownX = 0f
+
+    /** 触摸事件开始 y 坐标 */
+    private var mInitDownY = 0f
+
+    /** 触摸事件结束 x 坐标 */
+    private var mLastX = 0f
+
+    /** 触摸事件结束 y 坐标 */
+    private var mLastY = 0f
+
+    /** 触摸事件 id */
+    private var mActivePointerId = 0
+
+    private var mDragRatio = DEFAULT_DRAG_RATIO
+
+    /** 刷新最大偏移量 */
+    private var mRefreshFinalDragOffset: Float = 0f
+
+    /** 加载更多最大偏移量 */
+    private var mLoadMoreFinalDragOffset: Float = 0f
+
+    /** 状态 滑动刷新 -> 默认 持续时间 */
+    private var mSwipingToRefreshToDefaultScrollingDuration = DEFAULT_SWIPING_TO_REFRESH_TO_DEFAULT_SCROLLING_DURATION
+
+    /** 状态 释放刷新 -> 刷新 持续时间 */
+    private var mReleaseToRefreshToRefreshingScrollingDuration = DEFAULT_RELEASE_TO_REFRESHING_SCROLLING_DURATION
+
+    /** 刷新完成延时 */
+    private var mRefreshCompleteDelayDuration = DEFAULT_REFRESH_COMPLETE_DELAY_DURATION
+
+    /** 状态 刷新完成 -> 默认 持续时间 */
+    private var mRefreshCompleteToDefaultScrollingDuration = DEFAULT_REFRESH_COMPLETE_TO_DEFAULT_SCROLLING_DURATION
+
+    /** 状态 自动刷新开启 默认 -> 刷新 持续时间 */
+    private var mDefaultToRefreshingScrollingDuration = DEFAULT_DEFAULT_TO_REFRESHING_SCROLLING_DURATION
+
+    /** 状态 释放加载更多 -> 加载更多 持续时间 */
+    private var mReleaseToLoadMoreToLoadingMoreScrollingDuration = DEFAULT_RELEASE_TO_LOADING_MORE_SCROLLING_DURATION
+
+    /** 加载更多完成延时 */
+    private var mLoadMoreCompleteDelayDuration = DEFAULT_LOAD_MORE_COMPLETE_DELAY_DURATION
+
+    /** 状态 加载更多完成 -> 默认 持续时间 */
+    private var mLoadMoreCompleteToDefaultScrollingDuration = DEFAULT_LOAD_MORE_COMPLETE_TO_DEFAULT_SCROLLING_DURATION
+
+    /** 状态 滑动加载更多 -> 默认 持续时间 */
+    private var mSwipingToLoadMoreToDefaultScrollingDuration = DEFAULT_SWIPING_TO_LOAD_MORE_TO_DEFAULT_SCROLLING_DURATION
+
+    /** 状态 自动加载更多开启 默认 -> 加载更多 持续时间 */
+    private var mDefaultToLoadingMoreScrollingDuration = DEFAULT_DEFAULT_TO_LOADING_MORE_SCROLLING_DURATION
+
+    /** 刷新回调 */
+    private val mRefreshCallback: RefreshCallback = object : RefreshCallback() {
+
+        override fun onPrepare() {
+            if (mHeaderView != null && mHeaderView is SwipeTrigger && STATUS.isStatusDefault(mStatus)) {
+                mHeaderView?.visibility = View.VISIBLE
+                (mHeaderView as SwipeTrigger).onPrepare()
+            }
+        }
+
+        override fun onMove(y: Int, isComplete: Boolean, automatic: Boolean) {
+            if (mHeaderView != null && mHeaderView is SwipeTrigger && STATUS.isRefreshStatus(mStatus)) {
+                if (mHeaderView?.visibility != View.VISIBLE) {
+                    mHeaderView?.visibility = View.VISIBLE
+                }
+                (mHeaderView as SwipeTrigger).onMove(y, isComplete, automatic)
+            }
+        }
+
+        override fun onRelease() {
+            if (mHeaderView != null && mHeaderView is SwipeTrigger && STATUS.isReleaseToRefresh(mStatus)) {
+                (mHeaderView as SwipeTrigger).onRelease()
+            }
+        }
+
+        override fun onRefresh() {
+            if (mHeaderView != null && STATUS.isRefreshing(mStatus)) {
+                if (mHeaderView is SwipeRefreshTrigger) {
+                    (mHeaderView as SwipeRefreshTrigger).onRefresh()
+                }
+                refreshListener?.onRefresh()
+            }
+        }
+
+        override fun onComplete() {
+            if (mHeaderView != null && mHeaderView is SwipeTrigger) {
+                (mHeaderView as SwipeTrigger).onComplete()
+            }
+        }
+
+        override fun onReset() {
+            if (mHeaderView != null && mHeaderView is SwipeTrigger && STATUS.isStatusDefault(mStatus)) {
+                (mHeaderView as SwipeTrigger).onReset()
+                mHeaderView?.visibility = View.GONE
+            }
+        }
+    }
+
+    /** 上拉加载回调 */
+    private val mLoadMoreCallback: LoadMoreCallback = object : LoadMoreCallback() {
+
+        override fun onPrepare() {
+            if (mFooterView != null && mFooterView is SwipeTrigger && STATUS.isStatusDefault(mStatus)) {
+                mFooterView?.visibility = View.VISIBLE
+                (mFooterView as SwipeTrigger).onPrepare()
+            }
+        }
+
+        override fun onMove(y: Int, isComplete: Boolean, automatic: Boolean) {
+            if (mFooterView != null && mFooterView is SwipeTrigger && STATUS.isLoadMoreStatus(mStatus)) {
+                if (mFooterView?.visibility != View.VISIBLE) {
+                    mFooterView?.visibility = View.VISIBLE
+                }
+                (mFooterView as SwipeTrigger).onMove(y, isComplete, automatic)
+            }
+        }
+
+        override fun onRelease() {
+            if (mFooterView != null && mFooterView is SwipeTrigger && STATUS.isReleaseToLoadMore(mStatus)) {
+                (mFooterView as SwipeTrigger).onRelease()
+            }
+        }
+
+        override fun onLoadMore() {
+            if (mFooterView != null && STATUS.isLoadingMore(mStatus)) {
+                if (mFooterView is SwipeLoadMoreTrigger) {
+                    (mFooterView as SwipeLoadMoreTrigger).onLoadMore()
+                }
+                loadMoreListener?.onLoadMore()
+            }
+        }
+
+        override fun onComplete() {
+            if (mFooterView != null && mFooterView is SwipeTrigger) {
+                (mFooterView as SwipeTrigger).onComplete()
+            }
+        }
+
+        override fun onReset() {
+            if (mFooterView != null && mFooterView is SwipeTrigger && STATUS.isStatusDefault(mStatus)) {
+                (mFooterView as SwipeTrigger).onReset()
+                mFooterView?.visibility = View.GONE
+            }
+        }
     }
 
     /**
@@ -400,8 +391,7 @@ class SwipeToLoadLayout : ViewGroup {
      * 事件分发
      */
     override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
-        val action = MotionEventCompat.getActionMasked(ev)
-        when (action) {
+        when (ev.action) {
             MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_UP ->
                 // 触摸事件-抬起手指处理
                 onActivePointerUp()
@@ -413,11 +403,9 @@ class SwipeToLoadLayout : ViewGroup {
      * 事件拦截
      */
     override fun onInterceptTouchEvent(event: MotionEvent): Boolean {
-        val action = MotionEventCompat.getActionMasked(event)
-        when (action) {
+        when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-
-                mActivePointerId = MotionEventCompat.getPointerId(event, 0)
+                mActivePointerId = event.getPointerId(0)
                 mLastY = getMotionEventY(event, mActivePointerId)
                 mInitDownY = mLastY
                 mLastX = getMotionEventX(event, mActivePointerId)
@@ -446,10 +434,10 @@ class SwipeToLoadLayout : ViewGroup {
                 mLastX = x
                 val moved = Math.abs(yInitDiff) > Math.abs(xInitDiff) && Math.abs(yInitDiff) > mTouchSlop
                 val triggerCondition = (yInitDiff > 0 && moved && checkCanRefresh()) // 刷新的触发条件
-                         || (yInitDiff < 0 && moved && checkCanLoadMore()) // 加载更多的触发条件
+                        || (yInitDiff < 0 && moved && checkCanLoadMore()) // 加载更多的触发条件
 
                 if (triggerCondition) {
-                    // 触发了刷新或加载更多，拦截事件，交给 SwipeToloadLayout 的 onTouchEvent() 处理
+                    // 触发了刷新或加载更多，拦截事件，交给 SwipeToLoadLayout 的 onTouchEvent() 处理
                     return true
                 }
             }
@@ -468,12 +456,11 @@ class SwipeToLoadLayout : ViewGroup {
     /**
      * 事件处理
      */
+    @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        val action = MotionEventCompat.getActionMasked(event)
-
-        when (action) {
+        when (event.action) {
             MotionEvent.ACTION_DOWN -> {
-                mActivePointerId = MotionEventCompat.getPointerId(event, 0)
+                mActivePointerId = event.getPointerId(0)
                 return true
             }
             MotionEvent.ACTION_MOVE -> {
@@ -490,7 +477,6 @@ class SwipeToLoadLayout : ViewGroup {
                 if (Math.abs(xDiff) > Math.abs(yDiff) && Math.abs(xDiff) > mTouchSlop) {
                     return false
                 }
-
                 if (STATUS.isStatusDefault(mStatus)) {
                     if (yDiff > 0 && checkCanRefresh()) {
                         mRefreshCallback.onPrepare()
@@ -512,32 +498,30 @@ class SwipeToLoadLayout : ViewGroup {
                         return false
                     }
                 }
-
                 if (STATUS.isRefreshStatus(mStatus)) {
                     if (STATUS.isSwipingToRefresh(mStatus) || STATUS.isReleaseToRefresh(mStatus)) {
-                        if (mTargetOffset >= mRefreshTriggerOffset) {
-                            mStatus = STATUS.STATUS_RELEASE_TO_REFRESH
+                        mStatus = if (mTargetOffset >= mRefreshTriggerOffset) {
+                            STATUS.STATUS_RELEASE_TO_REFRESH
                         } else {
-                            mStatus = STATUS.STATUS_SWIPING_TO_REFRESH
+                            STATUS.STATUS_SWIPING_TO_REFRESH
                         }
                         fingerScroll(yDiff)
                     }
                 } else if (STATUS.isLoadMoreStatus(mStatus)) {
                     if (STATUS.isSwipingToLoadMore(mStatus) || STATUS.isReleaseToLoadMore(mStatus)) {
-                        if (-mTargetOffset >= mLoadMoreTriggerOffset) {
-                            mStatus = STATUS.STATUS_RELEASE_TO_LOAD_MORE
+                        mStatus = if (-mTargetOffset >= mLoadMoreTriggerOffset) {
+                            STATUS.STATUS_RELEASE_TO_LOAD_MORE
                         } else {
-                            mStatus = STATUS.STATUS_SWIPING_TO_LOAD_MORE
+                            STATUS.STATUS_SWIPING_TO_LOAD_MORE
                         }
                         fingerScroll(yDiff)
                     }
                 }
                 return true
             }
-
             MotionEvent.ACTION_POINTER_DOWN -> {
-                val pointerIndex = MotionEventCompat.getActionIndex(event)
-                val pointerId = MotionEventCompat.getPointerId(event, pointerIndex)
+                val pointerIndex = event.actionIndex
+                val pointerId = event.getPointerId(pointerIndex)
                 if (pointerId != INVALID_POINTER) {
                     mActivePointerId = pointerId
                 }
@@ -568,57 +552,67 @@ class SwipeToLoadLayout : ViewGroup {
     /**
      * 检查是否能刷新
      */
-    private fun checkCanRefresh() = mRefreshEnabled && !canChildScrollUp() && mHasHeaderView && mRefreshTriggerOffset > 0
+    private fun checkCanRefresh() =
+            mRefreshEnabled && !canChildScrollUp() && mHasHeaderView && mRefreshTriggerOffset > 0
 
     /**
      * 检查是否能加载更多
      */
-    private fun checkCanLoadMore() = mLoadMoreEnabled && !canChildScrollDown() && mHasFooterView && mLoadMoreTriggerOffset > 0
+    private fun checkCanLoadMore() =
+            mLoadMoreEnabled && !canChildScrollDown() && mHasFooterView && mLoadMoreTriggerOffset > 0
 
     /**
      * 目标控件能否向上滚动
      */
-    protected fun canChildScrollUp() = ViewCompat.canScrollVertically(mTargetView, -1)
+    private fun canChildScrollUp() =
+            if (mTargetView == null)
+                false
+            else
+                mTargetView!!.canScrollVertically(-1)
 
     /**
      * 目标控件能否向下滚动
      */
-    protected fun canChildScrollDown() = ViewCompat.canScrollVertically(mTargetView, 1)
+    private fun canChildScrollDown() =
+            if (mTargetView == null)
+                false
+            else
+                mTargetView!!.canScrollVertically(1)
 
     /**
      * 新的触摸事件，抬起手指
      */
     private fun onSecondaryPointerUp(ev: MotionEvent) {
-        val pointerIndex = MotionEventCompat.getActionIndex(ev)
-        val pointerId = MotionEventCompat.getPointerId(ev, pointerIndex)
+        val pointerIndex = ev.actionIndex
+        val pointerId = ev.getPointerId(pointerIndex)
         if (pointerId == mActivePointerId) {
             // This was our active pointer going up. Choose a new
             // active pointer and adjust accordingly.
             val newPointerIndex = if (pointerIndex == 0) 1 else 0
-            mActivePointerId = MotionEventCompat.getPointerId(ev, newPointerIndex)
+            mActivePointerId = ev.getPointerId(newPointerIndex)
         }
     }
 
     private fun getMotionEventX(event: MotionEvent, activePointId: Int): Float {
-        val index = MotionEventCompat.findPointerIndex(event, activePointId)
+        val index = event.findPointerIndex(activePointId)
         return if (index < 0)
             INVALID_COORDINATE.toFloat()
         else
-            MotionEventCompat.getX(event, index)
+            event.getX(index)
     }
 
     private fun getMotionEventY(event: MotionEvent, activePointerId: Int): Float {
-        val index = MotionEventCompat.findPointerIndex(event, activePointerId)
+        val index = event.findPointerIndex(activePointerId)
         return if (index < 0)
             INVALID_COORDINATE.toFloat()
         else
-            MotionEventCompat.getY(event, index)
+            event.getY(index)
     }
 
     /**
      * 处理抬起手指事件
      */
-    fun onActivePointerUp() {
+    private fun onActivePointerUp() {
         when {
             STATUS.isSwipingToRefresh(mStatus) -> scrollSwipingToRefreshToDefault()
             STATUS.isSwipingToLoadMore(mStatus) -> scrollSwipingToLoadMoreToDefault()
@@ -637,7 +631,7 @@ class SwipeToLoadLayout : ViewGroup {
     /**
      * 获取子控件大小、位置
      */
-    fun layoutChildren() {
+    private fun layoutChildren() {
 
         if (mTargetView == null) {
             // 没有目标控件，返回不做操作
@@ -752,19 +746,19 @@ class SwipeToLoadLayout : ViewGroup {
     }
 
     private fun autoScroll(yScrolled: Float) {
-
-        if (STATUS.isSwipingToRefresh(mStatus)) {
-            mRefreshCallback.onMove(mTargetOffset, false, true)
-        } else if (STATUS.isReleaseToRefresh(mStatus)) {
-            mRefreshCallback.onMove(mTargetOffset, false, true)
-        } else if (STATUS.isRefreshing(mStatus)) {
-            mRefreshCallback.onMove(mTargetOffset, true, true)
-        } else if (STATUS.isSwipingToLoadMore(mStatus)) {
-            mLoadMoreCallback.onMove(mTargetOffset, false, true)
-        } else if (STATUS.isReleaseToLoadMore(mStatus)) {
-            mLoadMoreCallback.onMove(mTargetOffset, false, true)
-        } else if (STATUS.isLoadingMore(mStatus)) {
-            mLoadMoreCallback.onMove(mTargetOffset, true, true)
+        when {
+            STATUS.isSwipingToRefresh(mStatus) ->
+                mRefreshCallback.onMove(mTargetOffset, false, true)
+            STATUS.isReleaseToRefresh(mStatus) ->
+                mRefreshCallback.onMove(mTargetOffset, false, true)
+            STATUS.isRefreshing(mStatus) ->
+                mRefreshCallback.onMove(mTargetOffset, true, true)
+            STATUS.isSwipingToLoadMore(mStatus) ->
+                mLoadMoreCallback.onMove(mTargetOffset, false, true)
+            STATUS.isReleaseToLoadMore(mStatus) ->
+                mLoadMoreCallback.onMove(mTargetOffset, false, true)
+            STATUS.isLoadingMore(mStatus) ->
+                mLoadMoreCallback.onMove(mTargetOffset, true, true)
         }
         updateScroll(yScrolled)
     }
@@ -803,11 +797,11 @@ class SwipeToLoadLayout : ViewGroup {
 
         private val mScroller: Scroller = Scroller(context)
 
-        var mmLastY: Int = 0
+        private var mmLastY: Int = 0
 
-        var mRunning = false
+        private var mRunning = false
 
-        var mAbort = false
+        private var mAbort = false
 
         override fun run() {
             val finish = !mScroller.computeScrollOffset() || mScroller.isFinished
@@ -902,45 +896,48 @@ class SwipeToLoadLayout : ViewGroup {
     }
 
     private fun fixCurrentStatusLayout() {
-        if (STATUS.isRefreshing(mStatus)) {
-            mTargetOffset = (mRefreshTriggerOffset + 0.5f).toInt()
-            mHeaderOffset = mTargetOffset
-            mFooterOffset = 0
-            layoutChildren()
-            invalidate()
-        } else if (STATUS.isStatusDefault(mStatus)) {
-            mTargetOffset = 0
-            mHeaderOffset = 0
-            mFooterOffset = 0
-            layoutChildren()
-            invalidate()
-        } else if (STATUS.isLoadingMore(mStatus)) {
-            mTargetOffset = -(mLoadMoreTriggerOffset + 0.5f).toInt()
-            mHeaderOffset = 0
-            mFooterOffset = mTargetOffset
-            layoutChildren()
-            invalidate()
+        when {
+            STATUS.isRefreshing(mStatus) -> {
+                mTargetOffset = (mRefreshTriggerOffset + 0.5f).toInt()
+                mHeaderOffset = mTargetOffset
+                mFooterOffset = 0
+                layoutChildren()
+                invalidate()
+            }
+            STATUS.isStatusDefault(mStatus) -> {
+                mTargetOffset = 0
+                mHeaderOffset = 0
+                mFooterOffset = 0
+                layoutChildren()
+                invalidate()
+            }
+            STATUS.isLoadingMore(mStatus) -> {
+                mTargetOffset = -(mLoadMoreTriggerOffset + 0.5f).toInt()
+                mHeaderOffset = 0
+                mFooterOffset = mTargetOffset
+                layoutChildren()
+                invalidate()
+            }
         }
     }
 
     /**
-     * invoke when [AutoScroller.finish] is automatic
+     * [AutoScroller.finish] 调用完处理状态
      */
     private fun autoScrollFinished() {
         val mLastStatus = mStatus
-
-        when (mStatus) {
-            STATUS.STATUS_RELEASE_TO_REFRESH -> {
+        when {
+            STATUS.isReleaseToRefresh(mStatus) -> {
                 mStatus = STATUS.STATUS_REFRESHING
                 fixCurrentStatusLayout()
                 mRefreshCallback.onRefresh()
             }
-            STATUS.STATUS_REFRESHING -> {
+            STATUS.isRefreshing(mStatus) -> {
                 mStatus = STATUS.STATUS_DEFAULT
                 fixCurrentStatusLayout()
                 mRefreshCallback.onReset()
             }
-            STATUS.STATUS_SWIPING_TO_REFRESH -> {
+            STATUS.isSwipingToRefresh(mStatus) -> {
                 if (mAutoLoading) {
                     mAutoLoading = false
                     mStatus = STATUS.STATUS_REFRESHING
@@ -952,7 +949,7 @@ class SwipeToLoadLayout : ViewGroup {
                     mRefreshCallback.onReset()
                 }
             }
-            STATUS.STATUS_SWIPING_TO_LOAD_MORE -> {
+            STATUS.isSwipingToLoadMore(mStatus) -> {
                 if (mAutoLoading) {
                     mAutoLoading = false
                     mStatus = STATUS.STATUS_LOADING_MORE
@@ -964,17 +961,17 @@ class SwipeToLoadLayout : ViewGroup {
                     mLoadMoreCallback.onReset()
                 }
             }
-            STATUS.STATUS_LOADING_MORE -> {
+            STATUS.isLoadingMore(mStatus) -> {
                 mStatus = STATUS.STATUS_DEFAULT
                 fixCurrentStatusLayout()
                 mLoadMoreCallback.onReset()
             }
-            STATUS.STATUS_RELEASE_TO_LOAD_MORE -> {
+            STATUS.isReleaseToLoadMore(mStatus) -> {
                 mStatus = STATUS.STATUS_LOADING_MORE
                 fixCurrentStatusLayout()
                 mLoadMoreCallback.onLoadMore()
             }
-            STATUS.STATUS_DEFAULT -> {
+            STATUS.isStatusDefault(mStatus) -> {
             }
             else -> throw IllegalStateException("illegal state: " + STATUS.getStatus(mStatus))
         }
@@ -985,11 +982,11 @@ class SwipeToLoadLayout : ViewGroup {
     }
 
     /**
-     * auto refresh or cancel
+     * 自动刷新或取消
      *
-     * @param refreshing
+     * @param refreshing true 自动刷新 false 取消
      */
-    fun setRefreshing(refreshing: Boolean) {
+    private fun setRefreshing(refreshing: Boolean) {
         if (!mRefreshEnabled || mHeaderView == null) {
             return
         }
@@ -1008,11 +1005,11 @@ class SwipeToLoadLayout : ViewGroup {
     }
 
     /**
-     * auto loading more or cancel
+     * 自动加载或取消
      *
-     * @param loadingMore
+     * @param loadingMore true 自动加载 false 取消
      */
-    fun setLoadingMore(loadingMore: Boolean) {
+    private fun setLoadingMore(loadingMore: Boolean) {
         if (!mLoadMoreEnabled || mFooterView == null) {
             return
         }
@@ -1030,16 +1027,28 @@ class SwipeToLoadLayout : ViewGroup {
         }
     }
 
+    /**
+     * 自动刷新
+     */
+    fun autoRefreshing() {
+        setRefreshing(true)
+    }
+
+    /**
+     * 自动加载
+     */
+    fun autoLoadMore() {
+        setLoadingMore(true)
+    }
+
     fun onComplete() {
         if (STATUS.isRefreshing(mStatus)) {
             setRefreshing(false)
         }
-
         if (STATUS.isLoadingMore(mStatus)) {
             setLoadingMore(false)
         }
     }
-
 }
 
 /**
@@ -1052,9 +1061,11 @@ object STYLE {
     val SCALE = 3
 }
 
+/**
+ * 控件状态
+ */
 object STATUS {
 
-    val STATUS_REFRESH_RETURNING = -4
     val STATUS_REFRESHING = -3
     val STATUS_RELEASE_TO_REFRESH = -2
     val STATUS_SWIPING_TO_REFRESH = -1
@@ -1062,7 +1073,6 @@ object STATUS {
     val STATUS_SWIPING_TO_LOAD_MORE = 1
     val STATUS_RELEASE_TO_LOAD_MORE = 2
     val STATUS_LOADING_MORE = 3
-    val STATUS_LOAD_MORE_RETURNING = 4
 
     fun isRefreshing(status: Int) = status == STATUS.STATUS_REFRESHING
 
@@ -1083,7 +1093,6 @@ object STATUS {
     fun isStatusDefault(status: Int) = status == STATUS.STATUS_DEFAULT
 
     fun getStatus(status: Int) = when (status) {
-        STATUS_REFRESH_RETURNING -> "status_refresh_returning"
         STATUS_REFRESHING -> "status_refreshing"
         STATUS_RELEASE_TO_REFRESH -> "status_release_to_refresh"
         STATUS_SWIPING_TO_REFRESH -> "status_swiping_to_refresh"
@@ -1091,7 +1100,6 @@ object STATUS {
         STATUS_SWIPING_TO_LOAD_MORE -> "status_swiping_to_load_more"
         STATUS_RELEASE_TO_LOAD_MORE -> "status_release_to_load_more"
         STATUS_LOADING_MORE -> "status_loading_more"
-        STATUS_LOAD_MORE_RETURNING -> "status_load_more_returning"
         else -> "status_illegal!"
     }
 
@@ -1100,6 +1108,9 @@ object STATUS {
     }
 }
 
+/**
+ * 滑动触发接口
+ */
 interface SwipeTrigger {
     fun onPrepare()
     fun onMove(y: Int, isComplete: Boolean, automatic: Boolean)
@@ -1108,28 +1119,40 @@ interface SwipeTrigger {
     fun onReset()
 }
 
+/**
+ * 刷新触发接口
+ */
 interface SwipeRefreshTrigger {
     fun onRefresh()
 }
 
+/**
+ * 加载更多触发接口
+ */
 interface SwipeLoadMoreTrigger {
     fun onLoadMore()
 }
 
 /**
- * refresh event callback
+ * 刷新回调
  */
 abstract class RefreshCallback : SwipeTrigger, SwipeRefreshTrigger
 
 /**
- * load more event callback
+ * 加载更多回调
  */
 abstract class LoadMoreCallback : SwipeTrigger, SwipeLoadMoreTrigger
 
+/**
+ * 刷新事件监听接口
+ */
 interface OnRefreshListener {
     fun onRefresh()
 }
 
+/**
+ * 加载更多事件监听接口
+ */
 interface OnLoadMoreListener {
     fun onLoadMore()
 }

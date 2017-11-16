@@ -65,7 +65,7 @@ class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListB
             }
         }
 
-        mBinding.swipe.mRefreshListener = object : OnRefreshListener {
+        mBinding.swipe.refreshListener = object : OnRefreshListener {
             override fun onRefresh() {
                 initData()
             }
