@@ -6,9 +6,9 @@ import com.wj.kotlintest.R
 import com.wj.kotlintest.adapter.FragVpAdapter
 import com.wj.kotlintest.base.BaseActivity
 import com.wj.kotlintest.base.BlankPresenter
+import com.wj.kotlintest.constants.MOVIES_TYPE_HIGHEST_RATE
+import com.wj.kotlintest.constants.MOVIES_TYPE_POPULAR
 import com.wj.kotlintest.databinding.ActivityMainBinding
-import com.wj.kotlintest.flag.TYPE_HIGHEST_RATE
-import com.wj.kotlintest.flag.TYPE_POPULAR
 import com.wj.kotlintest.fragment.MoviesListFragment
 
 /**
@@ -21,8 +21,8 @@ class MainActivity : BaseActivity<BlankPresenter, ActivityMainBinding>() {
         setContentView(R.layout.activity_main)
 
         val mFrags = ArrayList<Fragment>()
-        mFrags.add(MoviesListFragment.actionCreate(TYPE_HIGHEST_RATE))
-        mFrags.add(MoviesListFragment.actionCreate(TYPE_POPULAR))
+        mFrags.add(MoviesListFragment.actionCreate(MOVIES_TYPE_HIGHEST_RATE))
+        mFrags.add(MoviesListFragment.actionCreate(MOVIES_TYPE_POPULAR))
 
         mBinding.vp.adapter = FragVpAdapter.Builder()
                 .manager(supportFragmentManager)

@@ -1,6 +1,6 @@
 package com.wj.kotlintest.base
 
-import com.wj.kotlintest.constans.Constants
+import com.wj.kotlintest.constants.NET_RESPONSE_SUCCESS
 import com.wj.kotlintest.net.NetApi
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
@@ -49,7 +49,7 @@ open class BaseMVPPresenter<V : BaseMVPView, M : BaseMVPModule> {
      * @return 是否成功
      */
     protected fun <T : BaseEntity> checkResponse(data: T): Boolean {
-        return data.code == Constants.ResponseCode.SUCCESS
+        return data.code == NET_RESPONSE_SUCCESS
     }
 
     /**

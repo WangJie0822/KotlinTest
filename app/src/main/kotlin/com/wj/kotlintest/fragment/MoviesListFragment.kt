@@ -6,11 +6,11 @@ import com.wj.kotlintest.R
 import com.wj.kotlintest.activity.MoviesDetailsActivity
 import com.wj.kotlintest.adapter.MoviesListAdapter
 import com.wj.kotlintest.base.BaseFragment
+import com.wj.kotlintest.constants.MOVIES_TYPE_HIGHEST_RATE
+import com.wj.kotlintest.constants.MOVIES_TYPE_POPULAR
 import com.wj.kotlintest.databinding.FragmentMoviesListBinding
 import com.wj.kotlintest.entity.MoviesEntity
 import com.wj.kotlintest.entity.MoviesListEntity
-import com.wj.kotlintest.flag.TYPE_HIGHEST_RATE
-import com.wj.kotlintest.flag.TYPE_POPULAR
 import com.wj.kotlintest.handler.MoviesItemHandler
 import com.wj.kotlintest.mvp.MoviesListPresenter
 import com.wj.kotlintest.mvp.MoviesListView
@@ -32,7 +32,7 @@ class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListB
         /**
          * 创建对应 Fragment 对象
          *
-         * @param type 参数，列表类型 [TYPE_HIGHEST_RATE]、[TYPE_POPULAR]
+         * @param type 参数，列表类型 [MOVIES_TYPE_HIGHEST_RATE]、[MOVIES_TYPE_POPULAR]
          */
         fun actionCreate(type: Int): MoviesListFragment {
             val frag = MoviesListFragment()
@@ -59,8 +59,8 @@ class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListB
 
         fun initData() {
             when (arguments.getInt("MOVIES_TYPE")) {
-                TYPE_HIGHEST_RATE -> presenter.getHighestRatedMovies()
-                TYPE_POPULAR -> presenter.getPopularMovies()
+                MOVIES_TYPE_HIGHEST_RATE -> presenter.getHighestRatedMovies()
+                MOVIES_TYPE_POPULAR -> presenter.getPopularMovies()
                 else -> presenter.getHighestRatedMovies()
             }
         }
@@ -78,8 +78,8 @@ class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListB
     override fun initTitleBar() {
         showTitle()
         setTitleStr(when (arguments.getInt("MOVIES_TYPE")) {
-            TYPE_HIGHEST_RATE -> "高评分电影"
-            TYPE_POPULAR -> "最流行电影"
+            MOVIES_TYPE_HIGHEST_RATE -> "高评分电影"
+            MOVIES_TYPE_POPULAR -> "最流行电影"
             else -> ""
         })
     }
