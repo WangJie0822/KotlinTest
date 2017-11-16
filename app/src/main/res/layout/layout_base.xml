@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools">
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -16,180 +17,159 @@
         <import type="android.view.View"/>
     </data>
 
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <RelativeLayout
-            android:id="@+id/rl_title_bar"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp_48"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:background="@color/colorTheme"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
             android:visibility="@{handler.showTitle?View.VISIBLE:View.GONE}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:navigationIcon="@mipmap/arrow_left_white"
             tools:visibility="visible">
-
-            <ImageView
-                android:layout_width="@dimen/dp_48"
-                android:layout_height="@dimen/dp_48"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_centerVertical="true"
-                android:contentDescription="@null"
-                android:onClick="@{() -> handler.onLeftClick()}"
-                android:padding="@dimen/dp_13"
-                android:visibility="@{handler.showIvLeft?View.VISIBLE:View.GONE}"
-                app:res_img="@{handler.ivLeftResID}"
-                tools:src="@mipmap/arrow_left_white"
-                tools:visibility="visible"/>
 
             <TextView
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_centerInParent="true"
-                android:layout_marginLeft="@dimen/dp_50"
-                android:layout_marginRight="@dimen/dp_50"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="60dp"
+                android:layout_marginRight="60dp"
                 android:ellipsize="end"
                 android:gravity="center"
                 android:maxLines="1"
                 android:text="@{handler.tvTitle}"
-                android:textColor="@color/white"
-                android:textSize="@dimen/sp_20"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
                 android:visibility="@{handler.showTvTitle?View.VISIBLE:View.GONE}"
-                tools:ignore="RelativeOverlap"
-                tools:text="我的标题我的标题我的标题我的标题"
+                tools:text="我的标题我的标题我的标题我的标题我的标题"
                 tools:visibility="visible"/>
 
-            <ImageView
-                android:layout_width="@dimen/dp_48"
-                android:layout_height="@dimen/dp_48"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:contentDescription="@null"
-                android:onClick="@{() -> handler.onRightClick()}"
-                android:padding="@dimen/dp_13"
-                android:visibility="@{handler.showIvRight?View.VISIBLE:View.GONE}"
-                app:res_img="@{handler.ivRightResID}"
-                tools:src="@mipmap/question_ask"
-                tools:visibility="gone"/>
+        </android.support.v7.widget.Toolbar>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:gravity="center"
-                android:onClick="@{() -> handler.onRightClick()}"
-                android:padding="@dimen/dp_13"
-                android:text="@{handler.tvRight}"
-                android:textColor="@color/white"
-                android:textSize="@dimen/sp_16"
-                android:visibility="@{handler.showTvRight?View.VISIBLE:View.GONE}"
-                tools:ignore="RelativeOverlap"
-                tools:text="搜索"
-                tools:visibility="visible"/>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar"
+            app:layout_constraintVertical_bias="0.0">
 
             <FrameLayout
                 android:id="@+id/fl_content"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"/>
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:background="@color/colorThemeHalf"
+                tools:visibility="visible"/>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/white"
-                android:gravity="center_horizontal"
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:onClick="@{() -> handler.onNetErrorClick()}"
-                android:orientation="vertical"
                 android:visibility="@{handler.showNetError?View.VISIBLE:View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 tools:visibility="gone">
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dp_20"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="120dp"
                     android:contentDescription="@null"
-                    android:src="@mipmap/net_error"/>
+                    android:src="@mipmap/net_error"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dp_13"
                     android:gravity="center"
                     android:text="@string/load_fail"
-                    android:textColor="#aaaaaa"
-                    android:textSize="@dimen/sp_18"/>
+                    android:textColor="#AAAAAA"
+                    android:textSize="18sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
 
-            </LinearLayout>
+            </android.support.constraint.ConstraintLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/white"
-                android:gravity="center_horizontal"
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:onClick="@{() -> handler.onNoDataClick()}"
-                android:orientation="vertical"
                 android:visibility="@{handler.showNoData?View.VISIBLE:View.GONE}"
-                tools:ignore="UseCompoundDrawables"
-                tools:visibility="visible">
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="gone">
 
                 <ImageView
-                    android:layout_width="@dimen/dp_97"
-                    android:layout_height="@dimen/dp_143"
-                    android:layout_marginTop="@dimen/dp_20"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="100dp"
                     android:contentDescription="@null"
-                    android:src="@mipmap/no_data"/>
+                    android:src="@mipmap/no_data"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dp_20"
+                    android:layout_marginTop="280dp"
                     android:text="@string/no_data"
-                    android:textColor="@color/color_656565"
-                    android:textSize="@dimen/sp_14"/>
+                    android:textColor="#656565"
+                    android:textSize="14sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
 
-                <TextView
-                    android:id="@+id/tv_no_data"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dp_20"
-                    android:text="@string/no_data"
-                    android:textColor="@color/color_656565"
-                    android:textSize="@dimen/sp_14"
-                    android:visibility="gone"/>
+            </android.support.constraint.ConstraintLayout>
 
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/white"
-                android:gravity="center_horizontal"
-                android:orientation="vertical"
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="0dp"
+                android:layout_height="0dp"
                 android:visibility="@{handler.showLoading?View.VISIBLE:View.GONE}"
-                tools:visibility="gone">
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible">
 
                 <ImageView
                     android:id="@+id/iv_loading"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/dp_60"
+                    android:layout_marginTop="160dp"
                     android:contentDescription="@null"
-                    android:src="@drawable/data_loading"/>
+                    android:src="@drawable/data_loading"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
 
-            </LinearLayout>
+            </android.support.constraint.ConstraintLayout>
 
-        </RelativeLayout>
+        </android.support.constraint.ConstraintLayout>
 
-    </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
 
 </layout>

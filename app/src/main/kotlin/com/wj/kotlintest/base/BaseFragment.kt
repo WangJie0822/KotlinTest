@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.wj.kotlintest.R
 import com.wj.kotlintest.databinding.LayoutBaseBinding
+import com.wj.kotlintest.databinding.OnBaseClickListener
 import com.wj.kotlintest.databinding.RootHandler
 import dagger.android.support.DaggerFragment
 import javax.inject.Inject
@@ -24,7 +25,7 @@ import javax.inject.Inject
 abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     : DaggerFragment(),
         BaseMVPView,
-        RootHandler.OnTitleClickListener {
+        OnBaseClickListener {
 
     /** 当前界面 Context 对象*/
     protected lateinit var mContext: FragmentActivity
@@ -75,6 +76,11 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
         // 将当前布局添加到根布局
         rootBinding.flContent.removeAllViews()
         rootBinding.flContent.addView(mBinding.root)
+
+        // 设置左侧按钮点击事件监听
+        rootBinding.toolbar.setNavigationOnClickListener {
+            onLeftClick()
+        }
 
         // 初始化布局
         initView()
@@ -148,28 +154,7 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
      * @param resID     标题栏左侧图标资源id，默认返回按钮
      */
     protected fun setIvLeft(@DrawableRes resID: Int = R.mipmap.arrow_left_white) {
-        rootBinding.handler?.showIvLeft = true
-        rootBinding.handler?.ivLeftResID = resID
-    }
-
-    /**
-     * 设置右侧图标
-     *
-     * @param resID 图片资源id
-     */
-    protected fun setIvRight(@DrawableRes resID: Int) {
-        rootBinding.handler?.showIvRight = true
-        rootBinding.handler?.ivRightResID = resID
-    }
-
-    /**
-     * 设置右侧文本
-     *
-     * @param strResID 文本资源id
-     */
-    protected fun setTvRight(@StringRes strResID: Int) {
-        rootBinding.handler?.showTvRight = true
-        rootBinding.handler?.tvRight = getString(strResID)
+        rootBinding.toolbar.setNavigationIcon(resID)
     }
 
     /**
@@ -263,12 +248,7 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     /**
      * 标题栏左侧点击事件，默认结束当前界面
      */
-    override fun onLeftClick() {}
-
-    /**
-     * 标题栏右侧点击事件
-     */
-    override fun onRightClick() {}
+    open fun onLeftClick() {}
 
     /**
      * 无数据界面点击事件，默认显示加载中

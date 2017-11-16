@@ -1,1 +1,1 @@
-include ':app', ':SwipToLoad', ':swipetoloadlayout'
+include ':app', ':swipetoloadlayout'

@@ -76,6 +76,12 @@ class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListB
     }
 
     override fun initTitleBar() {
+        showTitle()
+        setTitleStr(when (arguments.getInt("MOVIES_TYPE")) {
+            TYPE_HIGHEST_RATE -> "高评分电影"
+            TYPE_POPULAR -> "最流行电影"
+            else -> ""
+        })
     }
 
     override fun onListComplete() {

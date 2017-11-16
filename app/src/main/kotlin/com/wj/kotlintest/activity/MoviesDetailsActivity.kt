@@ -3,10 +3,17 @@ package com.wj.kotlintest.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import com.wj.kotlintest.R
+import com.wj.kotlintest.base.BaseActivity
+import com.wj.kotlintest.base.BlankPresenter
+import com.wj.kotlintest.databinding.ActivityMoviesDetailsBinding
 
-class MoviesDetailsActivity : AppCompatActivity() {
+class MoviesDetailsActivity : BaseActivity<BlankPresenter, ActivityMoviesDetailsBinding>() {
+    override fun initTitleBar() {
+        showTitle()
+        setTitleStr("details")
+        setIvLeft()
+    }
 
     companion object {
         fun actionStart(context: Context) {

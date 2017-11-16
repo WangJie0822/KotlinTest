@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
 import com.wj.kotlintest.R
 import com.wj.kotlintest.databinding.LayoutBaseBinding
+import com.wj.kotlintest.databinding.OnBaseClickListener
 import com.wj.kotlintest.databinding.RootHandler
 import com.wj.kotlintest.utils.AppManager
 import com.wj.kotlintest.utils.StatusBarUtil
@@ -22,7 +23,7 @@ import javax.inject.Inject
 abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     : DaggerAppCompatActivity(),
         BaseMVPView,
-        RootHandler.OnTitleClickListener {
+        OnBaseClickListener {
 
     /** 当前界面 Context 对象*/
     protected lateinit var mContext: AppCompatActivity
@@ -93,6 +94,15 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
         // 设置布局
         super.setContentView(rootBinding.root)
 
+        // 添加 Toolbar
+        setSupportActionBar(rootBinding.toolbar)
+        // 隐藏默认 title
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        // 设置左侧按钮点击事件监听
+        rootBinding.toolbar.setNavigationOnClickListener {
+            onLeftClick()
+        }
+
         // 初始化状态栏
         initStatusBar()
     }
@@ -142,28 +152,7 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
      * @param resID     标题栏左侧图标资源id，默认返回按钮
      */
     protected fun setIvLeft(@DrawableRes resID: Int = R.mipmap.arrow_left_white) {
-        rootBinding.handler?.showIvLeft = true
-        rootBinding.handler?.ivLeftResID = resID
-    }
-
-    /**
-     * 设置右侧图标
-     *
-     * @param resID 图片资源id
-     */
-    protected fun setIvRight(@DrawableRes resID: Int) {
-        rootBinding.handler?.showIvRight = true
-        rootBinding.handler?.ivRightResID = resID
-    }
-
-    /**
-     * 设置右侧文本
-     *
-     * @param strResID 文本资源id
-     */
-    protected fun setTvRight(@StringRes strResID: Int) {
-        rootBinding.handler?.showTvRight = true
-        rootBinding.handler?.tvRight = getString(strResID)
+        rootBinding.toolbar.setNavigationIcon(resID)
     }
 
     /**
@@ -257,14 +246,9 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     /**
      * 标题栏左侧点击事件，默认结束当前界面
      */
-    override fun onLeftClick() {
+    open fun onLeftClick() {
         finish()
     }
-
-    /**
-     * 标题栏右侧点击事件
-     */
-    override fun onRightClick() {}
 
     /**
      * 无数据界面点击事件，默认显示加载中
