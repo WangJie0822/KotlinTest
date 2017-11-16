@@ -4,11 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import com.wj.kotlintest.R
-import com.wj.kotlintest.base.BaseActivity
+import com.wj.kotlintest.base.BaseSwipeBackActivity
 import com.wj.kotlintest.base.BlankPresenter
 import com.wj.kotlintest.databinding.ActivityMoviesDetailsBinding
 
-class MoviesDetailsActivity : BaseActivity<BlankPresenter, ActivityMoviesDetailsBinding>() {
+class MoviesDetailsActivity : BaseSwipeBackActivity<BlankPresenter, ActivityMoviesDetailsBinding>() {
     override fun initTitleBar() {
         showTitle()
         setTitleStr("details")
