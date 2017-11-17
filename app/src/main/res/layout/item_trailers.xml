@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="item"
+            type="com.wj.kotlintest.entity.TrailersEntity.Result"/>
+
+        <variable
+            name="handler"
+            type="com.wj.kotlintest.activity.MoviesDetailsActivity.MoviesDetailsHandler"/>
+    </data>
+
+    <LinearLayout
+        android:layout_width="170dp"
+        android:padding="10dp"
+        android:layout_height="wrap_content"
+        android:onClick="@{() -> handler.onTrailersClick(item)}"
+        android:orientation="vertical">
+
+        <ImageView
+            img_url="@{item.imgUrl()}"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:contentDescription="@null"
+            android:scaleType="fitXY"
+            tools:src="@mipmap/img_default"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@{item.name}"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                tools:text="Official Trailer"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@{@string/site + item.site}"
+                android:textSize="12sp"
+                tools:text="源: YouTube"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</layout>

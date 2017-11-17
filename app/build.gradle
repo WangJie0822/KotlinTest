@@ -16,7 +16,7 @@ android {
 
     defaultConfig {
         applicationId "com.wj.kotlintest"
-        minSdkVersion 15
+        minSdkVersion 16
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"
@@ -61,6 +61,8 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:26.1.0'
     /* 约束性布局 */
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    /* Design 支持 */
+    implementation 'com.android.support:design:26.1.0'
     /* 颜色获取 */
     implementation 'com.android.support:palette-v7:26.1.0'
     /* DataBinding */
@@ -82,5 +84,7 @@ dependencies {
     /* Glide */
     implementation 'com.github.bumptech.glide:glide:4.2.0'
     kapt 'com.github.bumptech.glide:compiler:4.2.0'
+    /* InterceptorLogger */
+    implementation 'com.orhanobut:logger:2.1.1'
     implementation project(':swipelayout')
 }

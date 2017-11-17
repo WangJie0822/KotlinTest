@@ -4,6 +4,7 @@ import android.databinding.ViewDataBinding
 import android.os.Bundle
 import com.wj.swipelayout.SwipeBackActivityBase
 import com.wj.swipelayout.SwipeBackActivityHelper
+import com.wj.swipelayout.SwipeBackLayout
 import com.wj.swipelayout.Utils
 
 /**
@@ -26,7 +27,7 @@ abstract class BaseSwipeBackActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBi
         mHelper.onPostCreate()
     }
 
-    override fun getSwipeBackLayout() = mHelper.swipeBackLayout
+    override fun getSwipeBackLayout(): SwipeBackLayout = mHelper.swipeBackLayout
 
     override fun setSwipeBackEnable(enable: Boolean) {
         swipeBackLayout.setEnableGesture(enable)

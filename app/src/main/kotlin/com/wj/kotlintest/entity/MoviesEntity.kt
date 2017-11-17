@@ -1,11 +1,13 @@
 package com.wj.kotlintest.entity
 
+import android.os.Parcel
+import android.os.Parcelable
 import java.util.*
 
 /**
  * @author 王杰
  */
-class MoviesEntity {
+class MoviesEntity() : Parcelable {
     /**
      * poster_path : /9O7gLzmreU0nGkIB6K3BsJbzvNv.jpg
      * adult : false
@@ -35,6 +37,53 @@ class MoviesEntity {
     var popularity: Double = 0.toDouble()
     var vote_count: Int = 0
     var isVideo: Boolean = false
-    var vote_average: Double = 0.toDouble()
+    var vote_average: String? = null
     var genre_ids: ArrayList<Int>? = null
+
+    constructor(parcel: Parcel) : this() {
+        poster_path = parcel.readString()
+        isAdult = parcel.readByte() != 0.toByte()
+        overview = parcel.readString()
+        release_date = parcel.readString()
+        id = parcel.readInt()
+        original_title = parcel.readString()
+        original_language = parcel.readString()
+        title = parcel.readString()
+        backdrop_path = parcel.readString()
+        popularity = parcel.readDouble()
+        vote_count = parcel.readInt()
+        isVideo = parcel.readByte() != 0.toByte()
+        vote_average = parcel.readString()
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(poster_path)
+        parcel.writeByte(if (isAdult) 1 else 0)
+        parcel.writeString(overview)
+        parcel.writeString(release_date)
+        parcel.writeInt(id)
+        parcel.writeString(original_title)
+        parcel.writeString(original_language)
+        parcel.writeString(title)
+        parcel.writeString(backdrop_path)
+        parcel.writeDouble(popularity)
+        parcel.writeInt(vote_count)
+        parcel.writeByte(if (isVideo) 1 else 0)
+        parcel.writeString(vote_average)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<MoviesEntity> {
+        override fun createFromParcel(parcel: Parcel): MoviesEntity {
+            return MoviesEntity(parcel)
+        }
+
+        override fun newArray(size: Int): Array<MoviesEntity?> {
+            return arrayOfNulls(size)
+        }
+    }
+
 }

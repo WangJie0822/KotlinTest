@@ -17,8 +17,6 @@ import javax.inject.Inject
 
 /**
  * 电影列表适配器类
- *
- * @author 王杰
  */
 class MoviesListAdapter @Inject constructor()
     : BaseRvAdapter<
@@ -27,13 +25,9 @@ class MoviesListAdapter @Inject constructor()
         MoviesItemHandler,
         ItemMoviesListBinding>() {
 
-    override fun layoutResID(): Int {
-        return R.layout.item_movies_list
-    }
+    override fun layoutResID() = R.layout.item_movies_list
 
-    override fun createViewHolder(binding: ItemMoviesListBinding): ViewHolder {
-        return ViewHolder(binding)
-    }
+    override fun createViewHolder(binding: ItemMoviesListBinding) = ViewHolder(binding)
 
     override fun convert(holder: ViewHolder, entity: MoviesEntity) {
         holder.bindData(entity)
@@ -45,6 +39,7 @@ class MoviesListAdapter @Inject constructor()
             val ctx = mBinding.iv.context
             GlideApp.with(ctx)
                     .asBitmap()
+                    .placeholder(R.mipmap.img_default)
                     .load(UrlDefinition.POSTER_PATH + entity.backdrop_path)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into<BitmapImageViewTarget>(object : BitmapImageViewTarget(mBinding.iv) {

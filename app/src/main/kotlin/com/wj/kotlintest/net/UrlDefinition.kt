@@ -29,4 +29,11 @@ object UrlDefinition {
 
     const val GET_POPULAR_MOVIES = "http://api.themoviedb.org/3/discover/movie?language=zh&sort_by=popularity.desc&api_key=" + API_KEY
 
+    const val GET_TRAILERS = "http://api.themoviedb.org/3/movie/%s/videos?api_key=" + API_KEY
+
+    const val GET_REVIEWS = "http://api.themoviedb.org/3/movie/%s/reviews?api_key=" + API_KEY
+
+    const val YOUTUBE_VIDEO_URL = "http://www.youtube.com/watch?v=%1\$s"
+    const val YOUTUBE_THUMBNAIL_URL = "http://img.youtube.com/vi/%1\$s/0.jpg"
+
 }

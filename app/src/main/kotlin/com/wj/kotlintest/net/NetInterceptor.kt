@@ -1,7 +1,6 @@
 package com.wj.kotlintest.net
 
 import android.util.Log
-import com.wj.kotlintest.BuildConfig
 import com.wj.kotlintest.expanding.jsonFormat
 import okhttp3.Headers
 import okhttp3.Interceptor
@@ -34,9 +33,9 @@ class ParamsInterceptor(private val log: Boolean = false) : Interceptor {
                 .newBuilder()
                 .scheme(oldRequest.url().scheme())
                 .host(oldRequest.url().host())
-                .addQueryParameter("version", BuildConfig.VERSION_NAME)         // 版本名
-                .addQueryParameter("platform", "android")                // 应用平台
-                .addQueryParameter("imei", "")                           // 手机IMEI
+//                .addQueryParameter("version", BuildConfig.VERSION_NAME)         // 版本名
+//                .addQueryParameter("platform", "android")                // 应用平台
+//                .addQueryParameter("imei", "")                           // 手机IMEI
                 .build()
 
         // 生成新的请求
@@ -53,9 +52,9 @@ class ParamsInterceptor(private val log: Boolean = false) : Interceptor {
  * 网络请求拦截器，打印网络请求相关信息
  *
  * @param level 日志打印等级[Level], 默认[Level.BASIC]
- * @param logger 日志打印接口[Logger], 默认实现[Logger.DEFAULT]
+ * @param logger 日志打印接口[InterceptorLogger], 默认实现[InterceptorLogger.DEFAULT]
  */
-class LogInterceptor(private var level: Level = Level.BASIC, private val logger: Logger = Logger.DEFAULT) : Interceptor {
+class LogInterceptor(private var level: Level = Level.BASIC, private val logger: InterceptorLogger = InterceptorLogger.DEFAULT) : Interceptor {
 
     companion object {
         /** 默认字符集 UTF-8 */
@@ -198,7 +197,7 @@ class LogInterceptor(private var level: Level = Level.BASIC, private val logger:
                                 "${jsonFormat.substring(0, 100)}\n\n The Json String was too long...\n\n ${
                                 jsonFormat.substring(jsonFormat.length - 100)}\n"
                             else
-                                "$jsonFormat\n"}")
+                                "$jsonFormat\n\n"}")
                         }
                         logStr.append("<-- END HTTP (${buffer.size()}-byte body)\n")
                     }
@@ -244,7 +243,7 @@ class LogInterceptor(private var level: Level = Level.BASIC, private val logger:
 /**
  * 日志打印接口
  */
-interface Logger {
+interface InterceptorLogger {
 
     /**
      * 打印日志
@@ -255,7 +254,7 @@ interface Logger {
 
     companion object {
         /** 默认日志打印 */
-        val DEFAULT: Logger = object : Logger {
+        val DEFAULT: InterceptorLogger = object : InterceptorLogger {
             override fun log(msg: String) {
                 Platform.get().log(Platform.INFO, msg, null)
             }

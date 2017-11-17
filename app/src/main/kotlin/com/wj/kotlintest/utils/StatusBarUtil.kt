@@ -1,7 +1,9 @@
 package com.wj.kotlintest.utils
 
+import android.annotation.TargetApi
 import android.app.Activity
 import android.content.Context
+import android.graphics.Color
 import android.os.Build
 import android.support.annotation.ColorRes
 import android.util.AttributeSet
@@ -63,6 +65,34 @@ object StatusBarUtil {
                 decorView.addView(statusView)
             }
             setRootView(activity)
+        }
+    }
+
+    /**
+     * 设置状态栏全透明
+     *
+     * @param activity 需要设置的activity
+     */
+    fun setTransparent(activity: Activity) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            return
+        }
+        transparentStatusBar(activity)
+        setRootView(activity)
+    }
+
+    /**
+     * 使状态栏透明
+     */
+    @TargetApi(Build.VERSION_CODES.KITKAT)
+    private fun transparentStatusBar(activity: Activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+            activity.window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
+            activity.window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION)
+            activity.window.statusBarColor = Color.TRANSPARENT
+        } else {
+            activity.window.addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         }
     }
 

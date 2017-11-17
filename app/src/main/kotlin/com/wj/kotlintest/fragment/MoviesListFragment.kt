@@ -14,7 +14,6 @@ import com.wj.kotlintest.entity.MoviesListEntity
 import com.wj.kotlintest.handler.MoviesItemHandler
 import com.wj.kotlintest.mvp.MoviesListPresenter
 import com.wj.kotlintest.mvp.MoviesListView
-import com.wj.kotlintest.utils.ToastUtil
 import com.wj.swipelayout.OnRefreshListener
 import javax.inject.Inject
 
@@ -51,8 +50,8 @@ class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListB
 
         presenter.attach(this)
 
-        adapter.bindData(mData)
-        adapter.bindHandler(HighestRatedHandler())
+        adapter.data = arrayListOf()
+        adapter.handler = HighestRatedHandler()
 
         mBinding.swipeTarget.layoutManager = GridLayoutManager(mContext, 2)
         mBinding.swipeTarget.adapter = adapter
@@ -89,15 +88,13 @@ class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListB
     }
 
     override fun notifyData(data: MoviesListEntity) {
-        mData.clear()
-        mData.addAll(data.results)
+        adapter.data.addAll(data.results)
         adapter.notifyDataSetChanged()
     }
 
     inner class HighestRatedHandler : MoviesItemHandler {
         override fun onMoviesItemClick(item: MoviesEntity) {
-            item.title?.let { ToastUtil.show(it) }
-            MoviesDetailsActivity.actionStart(mContext)
+            MoviesDetailsActivity.actionStart(mContext, item)
         }
     }
 }

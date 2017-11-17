@@ -8,6 +8,7 @@ import android.support.annotation.DrawableRes
 import android.support.annotation.StringRes
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
+import android.view.MenuItem
 import com.wj.kotlintest.R
 import com.wj.kotlintest.databinding.LayoutBaseBinding
 import com.wj.kotlintest.databinding.OnBaseClickListener
@@ -98,26 +99,34 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
         setSupportActionBar(rootBinding.toolbar)
         // 隐藏默认 title
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        // 设置左侧按钮点击事件监听
-        rootBinding.toolbar.setNavigationOnClickListener {
-            onLeftClick()
-        }
+//        // 设置左侧按钮点击事件监听
+//        rootBinding.toolbar.setNavigationOnClickListener {
+//            onLeftClick()
+//        }
 
         // 初始化状态栏
         initStatusBar()
     }
 
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        item?.let {
+            if (it.itemId == android.R.id.home) {
+                onLeftClick()
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     /**
      * 初始化标题栏，抽象方法，子类实现标题栏自定义
      */
-    protected abstract fun initTitleBar()
+    open protected fun initTitleBar() {}
 
     /**
-     * 初始化状态栏，默认主题色、不透明，修改需重写
+     * 初始化状态栏
+     * **建议使用主题而非[StatusBarUtil]**
      */
-    open protected fun initStatusBar() {
-        StatusBarUtil.setResColor(this, R.color.colorTheme, 0)
-    }
+    open protected fun initStatusBar() {}
 
     /**
      * 显示标题栏

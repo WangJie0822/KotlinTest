@@ -28,10 +28,10 @@ abstract class BaseRvAdapter<E, VH : BaseRvViewHolder<*, *>, H, in DB : ViewData
     }
 
     /** 数据集合  */
-    protected lateinit var mData: ArrayList<E>
+    lateinit var data: ArrayList<E>
 
     /** 事件处理  */
-    protected var handler: H? = null
+    var handler: H? = null
 
     /** 头布局集合 */
     private val headers: ArrayList<View> = ArrayList()
@@ -44,32 +44,12 @@ abstract class BaseRvAdapter<E, VH : BaseRvViewHolder<*, *>, H, in DB : ViewData
     private var mFooterPos: Int = 0
 
     /**
-     * 绑定数据
-     *
-     * @param data 数据集合
-     */
-    fun bindData(data: ArrayList<E>) {
-        mData = data
-    }
-
-    /**
-     * 绑定事件处理
-     *
-     * @param handler 事件处理对象
-     */
-    fun bindHandler(handler: H) {
-        this.handler = handler
-    }
-
-    /**
      * 根据 View 下标获取当前 View 布局类型
      */
-    override fun getItemViewType(position: Int): Int {
-        return when {
-            isHeader(position) -> VIEW_TYPE_HEADER // 头布局
-            isFooter(position) -> VIEW_TYPE_FOOTER // 脚布局
-            else -> VIEW_TYPE_NORMAL               // 普通布局
-        }
+    override fun getItemViewType(position: Int) = when {
+        isHeader(position) -> VIEW_TYPE_HEADER // 头布局
+        isFooter(position) -> VIEW_TYPE_FOOTER // 脚布局
+        else -> VIEW_TYPE_NORMAL               // 普通布局
     }
 
     /**
@@ -102,35 +82,28 @@ abstract class BaseRvAdapter<E, VH : BaseRvViewHolder<*, *>, H, in DB : ViewData
         }
         // 普通布局，绑定数据
         convert(holder, getItem(position - headers.size))
+        holder.mBinding.executePendingBindings()
     }
 
     /**
      * 获取条目总数
      */
-    override fun getItemCount(): Int {
-        return headers.size + mData.size + footers.size
-    }
+    override fun getItemCount() = headers.size + data.size + footers.size
 
     /**
      * 根据下标判断是否是头布局
      */
-    protected fun isHeader(position: Int): Boolean {
-        return position < headers.size
-    }
+    protected fun isHeader(position: Int) = position < headers.size
 
     /**
      * 根据下标判断是否是脚布局
      */
-    protected fun isFooter(position: Int): Boolean {
-        return position > itemCount - footers.size - 1
-    }
+    protected fun isFooter(position: Int) = position > itemCount - footers.size - 1
 
     /**
      * 根据下标获取当前布局对应的数据对象
      */
-    fun getItem(position: Int): E {
-        return mData[position]
-    }
+    fun getItem(position: Int) = data[position]
 
     /**
      * 添加头布局

@@ -120,7 +120,7 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     /**
      * 初始化标题栏
      */
-    protected abstract fun initTitleBar()
+    open protected fun initTitleBar(){}
 
     /**
      * 显示标题栏

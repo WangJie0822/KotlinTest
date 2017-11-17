@@ -4,6 +4,7 @@ import android.databinding.BindingAdapter
 import android.graphics.BitmapFactory
 import android.view.View
 import android.widget.ImageView
+import com.wj.kotlintest.R
 import com.wj.kotlintest.glide.GlideApp
 
 /**
@@ -32,6 +33,7 @@ object DataBindingAdapter {
     fun imgUrl(iv: ImageView, imgUrl: String) {
         GlideApp.with(iv.context)
                 .load(imgUrl)
+                .placeholder(R.mipmap.img_default)
                 .into(iv)
     }
 

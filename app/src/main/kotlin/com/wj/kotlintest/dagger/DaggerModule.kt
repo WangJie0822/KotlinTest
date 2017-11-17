@@ -1,5 +1,6 @@
 package com.wj.kotlintest.dagger
 
+import com.orhanobut.logger.Logger
 import com.wj.kotlintest.BuildConfig
 import com.wj.kotlintest.activity.MainActivity
 import com.wj.kotlintest.activity.MoviesDetailsActivity
@@ -21,6 +22,7 @@ import javax.inject.Singleton
 abstract class ActivityModule {
     @ContributesAndroidInjector
     abstract fun contributeMainActivity(): MainActivity
+
     @ContributesAndroidInjector
     abstract fun contributeMoviesDetailsActivity(): MoviesDetailsActivity
 }
@@ -44,7 +46,13 @@ class NetModule {
     fun netClient(): NetApi {
         val okHttpClient = OkHttpClient.Builder()
                 .addInterceptor(ParamsInterceptor(BuildConfig.DEBUG))
-                .addInterceptor(LogInterceptor(if (BuildConfig.DEBUG) Level.BODY else Level.NONE))
+                .addInterceptor(LogInterceptor(
+                        if (BuildConfig.DEBUG) Level.BODY else Level.NONE,
+                        object : InterceptorLogger {
+                            override fun log(msg: String) {
+                                Logger.d(msg)
+                            }
+                        }))
                 .build()
         val retrofit = Retrofit.Builder()
                 .baseUrl(UrlDefinition.BASE_URL)

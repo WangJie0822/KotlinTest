@@ -3,6 +3,9 @@ package com.wj.kotlintest.mvp
 import com.wj.kotlintest.base.BaseMVPModule
 import com.wj.kotlintest.base.OnNetFinishedListener
 import com.wj.kotlintest.entity.MoviesListEntity
+import com.wj.kotlintest.entity.ReviewsEntity
+import com.wj.kotlintest.entity.TrailersEntity
+import com.wj.kotlintest.net.UrlDefinition
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -34,6 +37,21 @@ class MoviesModule @Inject constructor() : BaseMVPModule() {
     fun getPopularMovies(listener: OnNetFinishedListener<MoviesListEntity>): Disposable {
         return netClient
                 .getPopularMovies()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ listener.onSuccess(it) }, { listener.onFail(it) })
+    }
+
+    fun getTrailers(id:String, listener: OnNetFinishedListener<TrailersEntity>): Disposable {
+        return netClient
+                .getTrailers(String.format(UrlDefinition.GET_TRAILERS, id))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ listener.onSuccess(it) }, { listener.onFail(it) })
+    }
+    fun getReviews(id:String, listener: OnNetFinishedListener<ReviewsEntity>): Disposable {
+        return netClient
+                .getReviews(String.format(UrlDefinition.GET_REVIEWS, id))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ listener.onSuccess(it) }, { listener.onFail(it) })

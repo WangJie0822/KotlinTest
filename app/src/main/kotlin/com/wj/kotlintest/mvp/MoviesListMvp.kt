@@ -16,21 +16,20 @@ class MoviesListPresenter @Inject constructor() : BaseMVPPresenter<MoviesListVie
      * 获取评分最高电影列表
      */
     fun getHighestRatedMovies() {
-
-        val dispose = mModule.getHighestRatedMovies(object : OnNetFinishedListener<MoviesListEntity> {
-            override fun onSuccess(entity: MoviesListEntity) {
-                mView?.let {
+        mView?.let {
+            val dispose = mModule.getHighestRatedMovies(object : OnNetFinishedListener<MoviesListEntity> {
+                override fun onSuccess(entity: MoviesListEntity) {
                     it.onNetFinished()
                     it.notifyData(entity)
                 }
-            }
 
-            override fun onFail(fail: Throwable) {
-                Log.e("NET_ERROR", "HIGHEST_RATED_MOVIES", fail)
-            }
-        })
+                override fun onFail(fail: Throwable) {
+                    Log.e("NET_ERROR", "HIGHEST_RATED_MOVIES", fail)
+                }
+            })
 
-        addDisposable(dispose)
+            addDisposable(dispose)
+        }
     }
 
     /**
@@ -38,20 +37,20 @@ class MoviesListPresenter @Inject constructor() : BaseMVPPresenter<MoviesListVie
      */
     fun getPopularMovies() {
 
-        val dispose = mModule.getPopularMovies(object : OnNetFinishedListener<MoviesListEntity> {
-            override fun onSuccess(entity: MoviesListEntity) {
-                mView?.let {
+        mView?.let {
+            val dispose = mModule.getPopularMovies(object : OnNetFinishedListener<MoviesListEntity> {
+                override fun onSuccess(entity: MoviesListEntity) {
                     it.onNetFinished()
                     it.notifyData(entity)
                 }
-            }
 
-            override fun onFail(fail: Throwable) {
-                Log.e("NET_ERROR", "HIGHEST_RATED_MOVIES", fail)
-            }
-        })
+                override fun onFail(fail: Throwable) {
+                    Log.e("NET_ERROR", "HIGHEST_RATED_MOVIES", fail)
+                }
+            })
 
-        addDisposable(dispose)
+            addDisposable(dispose)
+        }
     }
 }
 
