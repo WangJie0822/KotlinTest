@@ -1,5 +1,6 @@
 package com.wj.kotlintest.adapter
 
+import android.view.View
 import com.wj.kotlintest.R
 import com.wj.kotlintest.activity.MoviesDetailsActivity
 import com.wj.kotlintest.base.BaseRvAdapter
@@ -17,6 +18,8 @@ class TrailersAdapter @Inject constructor() : BaseRvAdapter<TrailersEntity.Resul
         ItemTrailersBinding>() {
 
     override fun layoutResID() = R.layout.item_trailers
+
+    override fun createViewHolder(view: View) = null
 
     override fun createViewHolder(binding: ItemTrailersBinding) = ViewHolder(binding)
 

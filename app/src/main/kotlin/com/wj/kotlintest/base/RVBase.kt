@@ -103,7 +103,7 @@ abstract class BaseRvAdapter<E, VH : BaseRvViewHolder<*, *>, H, in DB : ViewData
     /**
      * 根据下标获取当前布局对应的数据对象
      */
-    fun getItem(position: Int) = data[position]
+    protected fun getItem(position: Int) = data[position]
 
     /**
      * 添加头布局
@@ -164,9 +164,7 @@ abstract class BaseRvAdapter<E, VH : BaseRvViewHolder<*, *>, H, in DB : ViewData
      *
      * @return ViewHolder
      */
-    protected fun createViewHolder(view: View): VH? {
-        return null
-    }
+    protected abstract fun createViewHolder(view: View): VH?
 }
 
 /**

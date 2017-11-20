@@ -2,6 +2,7 @@ package com.wj.kotlintest.adapter
 
 import android.graphics.Bitmap
 import android.support.v7.graphics.Palette
+import android.view.View
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.transition.Transition
@@ -24,8 +25,9 @@ class MoviesListAdapter @Inject constructor()
         MoviesListAdapter.ViewHolder,
         MoviesItemHandler,
         ItemMoviesListBinding>() {
-
     override fun layoutResID() = R.layout.item_movies_list
+
+    override fun createViewHolder(view: View) = null
 
     override fun createViewHolder(binding: ItemMoviesListBinding) = ViewHolder(binding)
 
@@ -47,6 +49,7 @@ class MoviesListAdapter @Inject constructor()
                             super.onResourceReady(resource, transition)
                             Palette.from(resource)
                                     .generate({
+                                        @Suppress("DEPRECATION")
                                         mBinding.v.setBackgroundColor(
                                                 it.getVibrantColor(
                                                         ctx.resources

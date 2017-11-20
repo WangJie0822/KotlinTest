@@ -30,6 +30,7 @@ object StatusBarUtil {
      * @param alpha              状态栏透明度 0~255
      */
     fun setResColor(activity: Activity, @ColorRes colorResId: Int, alpha: Int = DEFAULT_STATUS_BAR_ALPHA) {
+        @Suppress("DEPRECATION")
         val color = activity.resources.getColor(colorResId)
         setColor(activity, color, alpha)
     }
