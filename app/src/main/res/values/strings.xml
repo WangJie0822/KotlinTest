@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">KotlinTest</string>
+    <string name="app_name">MovieGuide For Kotlin</string>
 
     <string name="no_data">暂无数据</string>
     <string name="net_error">网络出现问题，请稍后再试！</string>

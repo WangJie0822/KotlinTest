@@ -4,6 +4,7 @@ import com.orhanobut.logger.Logger
 import com.wj.kotlintest.BuildConfig
 import com.wj.kotlintest.activity.MainActivity
 import com.wj.kotlintest.activity.MoviesDetailsActivity
+import com.wj.kotlintest.activity.SplashActivity
 import com.wj.kotlintest.fragment.MoviesListFragment
 import com.wj.kotlintest.net.*
 import dagger.Module
@@ -20,6 +21,10 @@ import javax.inject.Singleton
  */
 @Module
 abstract class ActivityModule {
+
+    @ContributesAndroidInjector
+    abstract fun contributeSplashActivity(): SplashActivity
+
     @ContributesAndroidInjector
     abstract fun contributeMainActivity(): MainActivity
 

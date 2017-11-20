@@ -2,6 +2,9 @@
 
 package com.wj.kotlintest.constants
 
+/** 闪屏界面跳转演示 */
+val SPLASH_TIME_DELAY = 200L
+
 /** 电影列表 Fragment - 电影类型 Key */
 val MOVIES_LIST_TYPE = "movies_list_type"
 /** 电影列表类型 - 高评分 */

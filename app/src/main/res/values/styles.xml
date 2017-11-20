@@ -16,7 +16,7 @@
 
     <!-- 闪屏界面主题，默认背景 -->
     <style name="SplashTheme" parent="AppTheme.FullScreen">
-        <item name="android:windowBackground">@mipmap/data_loading1</item>
+        <item name="android:windowBackground">@mipmap/splash</item>
         <item name="android:windowFullscreen">true</item>
         <item name="windowNoTitle">true</item>
     </style>
