@@ -2,7 +2,6 @@ package com.wj.kotlintest.adapter
 
 import android.graphics.Bitmap
 import android.support.v7.graphics.Palette
-import android.view.View
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.transition.Transition
@@ -26,10 +25,6 @@ class MoviesListAdapter @Inject constructor()
         MoviesEntity>() {
 
     override fun layoutResID() = R.layout.item_movies_list
-
-    override fun createViewHolder(view: View) = null
-
-    override fun createViewHolder(binding: ItemMoviesListBinding) = ViewHolder(binding)
 
     class ViewHolder(binding: ItemMoviesListBinding) : BaseRvViewHolder<ItemMoviesListBinding, MoviesEntity>(binding) {
         override fun bindData(entity: MoviesEntity) {

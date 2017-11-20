@@ -2,11 +2,14 @@ package com.wj.kotlintest.base
 
 import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
+import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.wj.kotlintest.BR
+import java.lang.reflect.ParameterizedType
 
 /**
  * RecyclerView 适配器基类
@@ -16,7 +19,7 @@ import com.wj.kotlintest.BR
  * @param H  事件处理类型 Handler
  * @param E  数据类型
  */
-abstract class BaseRvAdapter<VH : BaseRvViewHolder<DB, E>, DB : ViewDataBinding, H, E> : RecyclerView.Adapter<VH>() {
+abstract class BaseRvAdapter<out VH : BaseRvViewHolder<DB, E>, DB : ViewDataBinding, H, E> : RecyclerView.Adapter<BaseRvViewHolder<DB, E>>() {
 
     companion object {
         /** 布局类型-头布局  */
@@ -34,9 +37,9 @@ abstract class BaseRvAdapter<VH : BaseRvViewHolder<DB, E>, DB : ViewDataBinding,
     var handler: H? = null
 
     /** 头布局集合 */
-    private val headers = arrayListOf<View>()
+    val headers = arrayListOf<View>()
     /** 脚布局集合 */
-    private val footers = arrayListOf<View>()
+    val footers = arrayListOf<View>()
 
     /** 头布局下标 */
     private var mHeaderPos: Int = 0
@@ -55,7 +58,7 @@ abstract class BaseRvAdapter<VH : BaseRvViewHolder<DB, E>, DB : ViewDataBinding,
         else -> VIEW_TYPE_NORMAL               // 普通布局
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH? {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BaseRvViewHolder<DB, E> {
         return if (viewType == VIEW_TYPE_NORMAL) {
             // 普通布局
             // 加载布局，初始化 DataBinding
@@ -76,7 +79,7 @@ abstract class BaseRvAdapter<VH : BaseRvViewHolder<DB, E>, DB : ViewDataBinding,
         }
     }
 
-    override fun onBindViewHolder(holder: VH, position: Int) {
+    override fun onBindViewHolder(holder: BaseRvViewHolder<DB, E>, position: Int) {
         if (isHeader(position) || isFooter(position)) {
             // 头布局、脚布局，返回不做操作
             return
@@ -88,6 +91,34 @@ abstract class BaseRvAdapter<VH : BaseRvViewHolder<DB, E>, DB : ViewDataBinding,
     }
 
     override fun getItemCount() = headers.size + data.size + footers.size
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        val manager = recyclerView.layoutManager
+        if (manager is GridLayoutManager) {
+            // 如果是 Grid 布局
+            manager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+                override fun getSpanSize(position: Int) =
+                        if (isHeader(position) || isFooter(position))
+                            manager.spanCount
+                        else
+                            // 如果是头布局或者脚布局，独占一行
+                            1
+            }
+        }
+    }
+
+    override fun onViewAttachedToWindow(holder: BaseRvViewHolder<DB, E>) {
+        val lp = holder.itemView.layoutParams
+        lp?.let {
+            if (it is StaggeredGridLayoutManager.LayoutParams) {
+                // 是瀑布流式布局
+                if (isFooter(holder.layoutPosition) || isHeader(holder.layoutPosition)) {
+                    // 是头布局或脚布局，独占一行
+                    it.isFullSpan = true
+                }
+            }
+        }
+    }
 
     /**
      * 根据下标判断是否是头布局
@@ -114,35 +145,21 @@ abstract class BaseRvAdapter<VH : BaseRvViewHolder<DB, E>, DB : ViewDataBinding,
     protected fun getItem(position: Int) = data[position]
 
     /**
-     * 添加头布局，**注意：必须重写 createViewHolder(view) 方法**
-     *
-     * @param headerView 头布局
-     */
-    fun addHeader(headerView: View) {
-        if (null == createViewHolder(headerView)) {
-            throw RuntimeException("Please override createViewHolder(view) first!")
-        }
-        headers.add(headerView)
-    }
-
-    /**
-     * 添加脚布局，**注意：必须重写 createViewHolder(view) 方法**
-     *
-     * @param footerView 脚布局
-     */
-    fun addFooter(footerView: View) {
-        if (null == createViewHolder(footerView)) {
-            throw RuntimeException("Please override createViewHolder(view) first!")
-        }
-        footers.add(footerView)
-    }
-
-    /**
      * 获取布局id
      *
      * @return 布局id
      */
     protected abstract fun layoutResID(): Int
+
+    /**
+     * 绑定数据
+     *
+     * @param holder ViewHolder
+     * @param entity   数据对象
+     */
+    protected fun convert(holder: BaseRvViewHolder<DB, E>, entity: E) {
+        holder.bindData(entity)
+    }
 
     /**
      * 创建ViewHolder
@@ -151,16 +168,9 @@ abstract class BaseRvAdapter<VH : BaseRvViewHolder<DB, E>, DB : ViewDataBinding,
      *
      * @return ViewHolder 对象
      */
-    protected abstract fun createViewHolder(binding: DB): VH
-
-    /**
-     * 绑定数据
-     *
-     * @param holder ViewHolder
-     * @param entity   数据对象
-     */
-    protected fun convert(holder: VH, entity: E) {
-        holder.bindData(entity)
+    protected open fun createViewHolder(binding: DB): VH {
+        val holderConstructor = getVHClass().getConstructor(getDBClass())
+        return holderConstructor.newInstance(binding)
     }
 
     /**
@@ -170,7 +180,33 @@ abstract class BaseRvAdapter<VH : BaseRvViewHolder<DB, E>, DB : ViewDataBinding,
      *
      * @return ViewHolder
      */
-    protected abstract fun createViewHolder(view: View): VH?
+    protected open fun createViewHolder(view: View): BaseRvViewHolder<DB, E> {
+        @Suppress("UNCHECKED_CAST")
+        val clazz = getVHClass().superclass as Class<BaseRvViewHolder<DB, E>>
+        val constructor = clazz.getConstructor(View::class.java)
+        return constructor.newInstance(view)
+    }
+
+    /**
+     * 获取 ViewHolder 的类
+     *
+     * @return ViewHolder 实际类型
+     */
+    @Suppress("UNCHECKED_CAST")
+    private fun getVHClass() = getActualTypeList()[0] as Class<VH>
+
+    /**
+     * 获取 DataBinding 的类
+     *
+     * @return DataBinding 的实际类型
+     */
+    @Suppress("UNCHECKED_CAST")
+    private fun getDBClass() = getActualTypeList()[1] as Class<DB>
+
+    /**
+     * 获取泛型实际类型列表
+     */
+    private fun getActualTypeList() = (javaClass.genericSuperclass as ParameterizedType).actualTypeArguments
 }
 
 /**
@@ -196,7 +232,7 @@ open class BaseRvViewHolder<DB : ViewDataBinding, E> : RecyclerView.ViewHolder {
      *
      * @param binding DataBinding 对象
      */
-    constructor(binding: DB) : super(binding.root) {
+    constructor(binding: DB) : this(binding.root) {
         mBinding = binding
     }
 

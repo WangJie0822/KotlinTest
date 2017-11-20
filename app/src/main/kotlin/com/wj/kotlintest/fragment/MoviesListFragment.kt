@@ -27,7 +27,8 @@ class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListB
     lateinit var adapter: MoviesListAdapter
 
     /** 标记-电影列表类型 */
-    private val moviesType = arguments.getInt(MOVIES_LIST_TYPE)
+    private val moviesType
+        get() = arguments.getInt(MOVIES_LIST_TYPE)
 
     companion object {
         /**
@@ -109,7 +110,7 @@ class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListB
     /**
      * 电影列表界面事件处理类
      */
-    inner class MoviesListHandler  {
+    inner class MoviesListHandler {
 
         /**
          * 电影列表条目点击事件
