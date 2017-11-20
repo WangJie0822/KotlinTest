@@ -6,6 +6,7 @@ import android.databinding.BaseObservable
 import android.databinding.Bindable
 import android.net.Uri
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.TextView
@@ -166,9 +167,18 @@ class MoviesDetailsActivity
             startActivity(playVideoIntent)
         }
 
-        fun onFavoriteClick() {
+        fun onFavoriteClick(v: View) {
+            val str = if (favorite) {
+                "取消收藏"
+            } else {
+                "加入收藏"
+            }
             favorite = !favorite
             SharedPrefUtil.putBoolean(FAVORITE_MOVIES + movies.id, favorite)
+            val snackbar = Snackbar.make(v, str, Snackbar.LENGTH_SHORT)
+            @Suppress("DEPRECATION")
+            snackbar.view.setBackgroundColor(resources.getColor(R.color.colorTheme))
+            snackbar.show()
         }
     }
 

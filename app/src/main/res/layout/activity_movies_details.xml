@@ -176,7 +176,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:onClick="@{() -> handler.onFavoriteClick()}"
+            android:onClick="@{(v) -> handler.onFavoriteClick(v)}"
             android:src="@drawable/selector_favorite"
             app:layout_anchor="@id/appBar"
             app:layout_anchorGravity="bottom|end"
