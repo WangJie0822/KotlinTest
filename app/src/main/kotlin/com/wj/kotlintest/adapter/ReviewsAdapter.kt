@@ -12,20 +12,17 @@ import javax.inject.Inject
 /**
  * 评论列表适配器类
  */
-class ReviewsAdapter @Inject constructor() : BaseRvAdapter<ReviewsEntity.Result,
-        ReviewsAdapter.ViewHolder,
+class ReviewsAdapter @Inject constructor()
+    : BaseRvAdapter<ReviewsAdapter.ViewHolder,
+        ItemReviewsBinding,
         MoviesDetailsActivity.MoviesDetailsHandler,
-        ItemReviewsBinding>() {
+        ReviewsEntity.Result>() {
 
     override fun layoutResID() = R.layout.item_reviews
 
     override fun createViewHolder(view: View) = null
 
     override fun createViewHolder(binding: ItemReviewsBinding) = ViewHolder(binding)
-
-    override fun convert(holder: ViewHolder, entity: ReviewsEntity.Result) {
-        holder.bindData(entity)
-    }
 
     class ViewHolder(binding: ItemReviewsBinding) : BaseRvViewHolder<ItemReviewsBinding, ReviewsEntity.Result>(binding)
 }

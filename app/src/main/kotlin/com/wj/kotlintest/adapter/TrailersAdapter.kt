@@ -12,20 +12,17 @@ import javax.inject.Inject
 /**
  * 特别收录列表适配器类
  */
-class TrailersAdapter @Inject constructor() : BaseRvAdapter<TrailersEntity.Result,
-        TrailersAdapter.ViewHolder,
+class TrailersAdapter @Inject constructor()
+    : BaseRvAdapter<TrailersAdapter.ViewHolder,
+        ItemTrailersBinding,
         MoviesDetailsActivity.MoviesDetailsHandler,
-        ItemTrailersBinding>() {
+        TrailersEntity.Result>() {
 
     override fun layoutResID() = R.layout.item_trailers
 
     override fun createViewHolder(view: View) = null
 
     override fun createViewHolder(binding: ItemTrailersBinding) = ViewHolder(binding)
-
-    override fun convert(holder: ViewHolder, entity: TrailersEntity.Result) {
-        holder.bindData(entity)
-    }
 
     class ViewHolder(binding: ItemTrailersBinding) : BaseRvViewHolder<ItemTrailersBinding, TrailersEntity.Result>(binding)
 }
