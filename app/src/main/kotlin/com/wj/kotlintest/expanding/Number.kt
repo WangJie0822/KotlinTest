@@ -24,10 +24,8 @@ fun <N : Number> N.dip2px(): Int {
  *
  * @return 四舍五入后的值
  */
-fun <N : Number> N.round(): Int {
-    return when(this) {
-        is Float -> (this + 0.5F).toInt()
-        is Double -> (this + 0.5).toInt()
-        else -> this.toInt()
-    }
+fun <N : Number> N.round() = when (this) {
+    is Float -> (this + 0.5F).toInt()
+    is Double -> (this + 0.5).toInt()
+    else -> this.toInt()
 }
