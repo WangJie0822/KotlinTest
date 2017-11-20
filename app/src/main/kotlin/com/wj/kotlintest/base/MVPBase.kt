@@ -84,31 +84,30 @@ open class BaseMVPModule @Inject constructor() {
 interface BaseMVPView {
 
     /**
-     * 网络请求结束
-     */
-    fun onNetFinished()
-
-    /**
      * 网络故障
      */
-    fun onNetError()
+    fun netError()
 
     /**
      * 无数据
      */
-    fun onNoData()
+    fun noData()
 
     /**
      * 加载中
      */
-    fun onLoading()
+    fun loading()
+
+    /**
+     * 网络请求结束
+     */
+    fun netFinished()
 }
 
 /**
  * 网络请求结束回调接口
  *
  * @param E 请求成功返回数据类型
- * @author 王杰
  */
 interface OnNetFinishedListener<in E : BaseEntity> {
 
@@ -122,13 +121,13 @@ interface OnNetFinishedListener<in E : BaseEntity> {
     /**
      * 请求失败
      *
-     * @param fail 失败信息
+     * @param throwable 失败信息
      */
-    fun onFail(fail: Throwable)
+    fun onFailed(throwable: Throwable)
 }
 
 /**
- * 空白Presenter
+ * 空白 Presenter，继承 [BaseMVPPresenter]
  */
 class BlankPresenter @Inject constructor() : BaseMVPPresenter<BaseMVPView, BaseMVPModule>()
 

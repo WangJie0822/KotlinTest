@@ -1041,6 +1041,9 @@ open class SwipeToLoadLayout @JvmOverloads constructor(context: Context, attrs: 
         setLoadingMore(true)
     }
 
+    /**
+     * 下拉刷新、上拉加载完成后调用，回收头、脚布局
+     */
     fun onComplete() {
         if (STATUS.isRefreshing(mStatus)) {
             setRefreshing(false)

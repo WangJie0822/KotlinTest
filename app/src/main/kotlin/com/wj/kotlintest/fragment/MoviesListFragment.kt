@@ -6,12 +6,12 @@ import com.wj.kotlintest.R
 import com.wj.kotlintest.activity.MoviesDetailsActivity
 import com.wj.kotlintest.adapter.MoviesListAdapter
 import com.wj.kotlintest.base.BaseFragment
+import com.wj.kotlintest.constants.MOVIES_LIST_TYPE
 import com.wj.kotlintest.constants.MOVIES_TYPE_HIGHEST_RATE
 import com.wj.kotlintest.constants.MOVIES_TYPE_POPULAR
 import com.wj.kotlintest.databinding.FragmentMoviesListBinding
 import com.wj.kotlintest.entity.MoviesEntity
 import com.wj.kotlintest.entity.MoviesListEntity
-import com.wj.kotlintest.handler.MoviesItemHandler
 import com.wj.kotlintest.mvp.MoviesListPresenter
 import com.wj.kotlintest.mvp.MoviesListView
 import com.wj.swipelayout.OnRefreshListener
@@ -22,10 +22,12 @@ import javax.inject.Inject
  */
 class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListBinding>(), MoviesListView {
 
-    private val mData = ArrayList<MoviesEntity>()
-
+    /** 电影列表适配器 */
     @Inject
     lateinit var adapter: MoviesListAdapter
+
+    /** 标记-电影列表类型 */
+    private val moviesType = arguments.getInt(MOVIES_LIST_TYPE)
 
     companion object {
         /**
@@ -36,47 +38,58 @@ class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListB
         fun actionCreate(type: Int): MoviesListFragment {
             val frag = MoviesListFragment()
             val args = Bundle()
-            args.putInt("MOVIES_TYPE", type)
+            args.putInt(MOVIES_LIST_TYPE, type)
             frag.arguments = args
             return frag
         }
     }
 
-    override fun layoutResID(): Int {
-        return R.layout.fragment_movies_list
-    }
+    override fun layoutResID() = R.layout.fragment_movies_list
 
     override fun initView() {
 
+        // 绑定 MVP
         presenter.attach(this)
 
+        // 绑定数据、Handler
         adapter.data = arrayListOf()
-        adapter.handler = HighestRatedHandler()
+        adapter.handler = MoviesListHandler()
 
+        // 设置 RecyclerView 布局管理、适配器
         mBinding.swipeTarget.layoutManager = GridLayoutManager(mContext, 2)
         mBinding.swipeTarget.adapter = adapter
 
+        /**
+         * 初始化数据
+         */
         fun initData() {
-            when (arguments.getInt("MOVIES_TYPE")) {
+            // 根据
+            when (moviesType) {
                 MOVIES_TYPE_HIGHEST_RATE -> presenter.getHighestRatedMovies()
                 MOVIES_TYPE_POPULAR -> presenter.getPopularMovies()
                 else -> presenter.getHighestRatedMovies()
             }
         }
 
+        // 设置下拉刷新监听
         mBinding.swipe.refreshListener = object : OnRefreshListener {
             override fun onRefresh() {
+                // 初始化数据
                 initData()
             }
         }
 
-        onLoading()
+        // 显示加载中界面
+        loading()
+        // 加载数据
         initData()
     }
 
     override fun initTitleBar() {
+        // 显示标题栏
         showTitle()
-        setTitleStr(when (arguments.getInt("MOVIES_TYPE")) {
+        // 根据列表类型，设置标题文本
+        setTitleStr(when (moviesType) {
             MOVIES_TYPE_HIGHEST_RATE -> "高评分电影"
             MOVIES_TYPE_POPULAR -> "最流行电影"
             else -> ""
@@ -88,13 +101,23 @@ class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListB
     }
 
     override fun notifyData(data: MoviesListEntity) {
+        // 加载完成，更新界面
         adapter.data.addAll(data.results)
         adapter.notifyDataSetChanged()
     }
 
-    inner class HighestRatedHandler : MoviesItemHandler {
-        override fun onMoviesItemClick(item: MoviesEntity) {
-            MoviesDetailsActivity.actionStart(mContext, item)
+    /**
+     * 电影列表界面事件处理类
+     */
+    inner class MoviesListHandler  {
+
+        /**
+         * 电影列表条目点击事件
+         *
+         * @param entity 条目对应数据对象
+         */
+        fun onMoviesItemClick(entity: MoviesEntity) {
+            MoviesDetailsActivity.actionStart(mContext, entity)
         }
     }
 }

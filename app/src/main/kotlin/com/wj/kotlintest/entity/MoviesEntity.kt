@@ -5,7 +5,7 @@ import android.os.Parcelable
 import java.util.*
 
 /**
- * @author 王杰
+ * 电影信息实体类
  */
 class MoviesEntity() : Parcelable {
     /**

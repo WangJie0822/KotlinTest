@@ -24,9 +24,19 @@ interface NetApi {
     @GET(UrlDefinition.GET_POPULAR_MOVIES)
     fun getPopularMovies(): Observable<MoviesListEntity>
 
+    /**
+     * 获取特别收录信息
+     *
+     * @param url 请求链接
+     */
     @GET
     fun getTrailers(@Url url: String): Observable<TrailersEntity>
 
+    /**
+     * 获取评论信息
+     *
+     * @param url 请求链接
+     */
     @GET
     fun getReviews(@Url url: String): Observable<ReviewsEntity>
 }

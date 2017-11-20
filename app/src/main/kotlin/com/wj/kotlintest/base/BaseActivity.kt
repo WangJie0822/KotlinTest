@@ -20,6 +20,9 @@ import javax.inject.Inject
 
 /**
  * Activity 基类
+ *
+ * @param P MVP Presenter 类，继承 [BaseMVPPresenter]，若没有，使用 [BlankPresenter]
+ * @param DB DataBinding 类，继承 [ViewDataBinding]
  */
 abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     : DaggerAppCompatActivity(),
@@ -99,10 +102,6 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
         setSupportActionBar(rootBinding.toolbar)
         // 隐藏默认 title
         supportActionBar?.setDisplayShowTitleEnabled(false)
-//        // 设置左侧按钮点击事件监听
-//        rootBinding.toolbar.setNavigationOnClickListener {
-//            onLeftClick()
-//        }
 
         // 初始化状态栏
         initStatusBar()
@@ -111,6 +110,7 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         item?.let {
             if (it.itemId == android.R.id.home) {
+                // 左侧按钮点击事件
                 onLeftClick()
             }
         }
@@ -167,7 +167,7 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     /**
      * 重写BaseMvpView中方法，网络异常时调用
      */
-    override fun onNetError() {
+    override fun netError() {
         val handler = rootBinding.handler
         handler?.let {
             if (it.showNoData) {
@@ -181,14 +181,14 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
             if (!it.showNetError) {
                 it.showNetError = true
             }
-            onListComplete()
+            listComplete()
         }
     }
 
     /**
      * 重写BaseMvpView中方法，无数据时调用
      */
-    override fun onNoData() {
+    override fun noData() {
         val handler = rootBinding.handler
         handler?.let {
             if (it.showNetError) {
@@ -202,14 +202,14 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
             if (!it.showNoData) {
                 it.showNoData = true
             }
-            onListComplete()
+            listComplete()
         }
     }
 
     /**
      * 重写BaseMvpView中方法，加载数据时调用
      */
-    override fun onLoading() {
+    override fun loading() {
         val handler = rootBinding.handler
         handler?.let {
             if (it.showNetError) {
@@ -229,7 +229,7 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     /**
      * 重写BaseMvpView中方法，网络请求结束后调用，隐藏其他界面
      */
-    override fun onNetFinished() {
+    override fun netFinished() {
         val handler = rootBinding.handler
         handler?.let {
             if (it.showNetError) {
@@ -243,14 +243,14 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
                 (drawable as? AnimationDrawable)?.stop()
                 it.showLoading = false
             }
-            onListComplete()
+            listComplete()
         }
     }
 
     /**
-     * 使用SwipeToLoadView时重写，完成刷新步骤
+     * 使用 [com.wj.swipelayout.SwipeToLoadLayout] 时重写，完成刷新步骤
      */
-    open protected fun onListComplete() {}
+    open protected fun listComplete() {}
 
     /**
      * 标题栏左侧点击事件，默认结束当前界面
@@ -263,13 +263,13 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
      * 无数据界面点击事件，默认显示加载中
      */
     override fun onNoDataClick() {
-        onLoading()
+        loading()
     }
 
     /**
      * 网络异常界面点击事件，默认显示加载中
      */
     override fun onNetErrorClick() {
-        onLoading()
+        loading()
     }
 }

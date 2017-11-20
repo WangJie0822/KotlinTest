@@ -120,7 +120,7 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     /**
      * 初始化标题栏
      */
-    open protected fun initTitleBar(){}
+    open protected fun initTitleBar() {}
 
     /**
      * 显示标题栏
@@ -160,7 +160,7 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     /**
      * 重写BaseMvpView中方法，网络异常时调用
      */
-    override fun onNetError() {
+    override fun netError() {
         val handler = rootBinding.handler
         handler?.let {
             if (it.showNoData) {
@@ -181,7 +181,7 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     /**
      * 重写BaseMvpView中方法，无数据时调用
      */
-    override fun onNoData() {
+    override fun noData() {
         val handler = rootBinding.handler
         handler?.let {
             if (it.showNetError) {
@@ -202,7 +202,7 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     /**
      * 重写BaseMvpView中方法，加载数据时调用
      */
-    override fun onLoading() {
+    override fun loading() {
         val handler = rootBinding.handler
         handler?.let {
             if (it.showNetError) {
@@ -222,7 +222,7 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     /**
      * 重写BaseMvpView中方法，网络请求结束后调用，隐藏其他界面
      */
-    override fun onNetFinished() {
+    override fun netFinished() {
         val handler = rootBinding.handler
         handler?.let {
             if (it.showNetError) {
@@ -254,13 +254,13 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
      * 无数据界面点击事件，默认显示加载中
      */
     override fun onNoDataClick() {
-        onLoading()
+        loading()
     }
 
     /**
      * 网络异常界面点击事件，默认显示加载中
      */
     override fun onNetErrorClick() {
-        onLoading()
+        loading()
     }
 }

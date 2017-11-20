@@ -4,7 +4,7 @@ import com.wj.kotlintest.base.BaseEntity
 import java.util.*
 
 /**
- * @author 王杰
+ * 电影列表实体类
  */
 class MoviesListEntity : BaseEntity() {
 

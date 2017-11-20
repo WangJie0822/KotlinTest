@@ -26,7 +26,7 @@ class MoviesModule @Inject constructor() : BaseMVPModule() {
                 .getHighestRatedMovies()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ listener.onSuccess(it) }, { listener.onFail(it) })
+                .subscribe({ listener.onSuccess(it) }, { listener.onFailed(it) })
     }
 
     /**
@@ -39,22 +39,35 @@ class MoviesModule @Inject constructor() : BaseMVPModule() {
                 .getPopularMovies()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ listener.onSuccess(it) }, { listener.onFail(it) })
+                .subscribe({ listener.onSuccess(it) }, { listener.onFailed(it) })
     }
 
-    fun getTrailers(id:String, listener: OnNetFinishedListener<TrailersEntity>): Disposable {
+    /**
+     * 获取特别收录信息
+     *
+     * @param id 电影 id
+     * @param listener 请求回调接口
+     */
+    fun getTrailers(id: String, listener: OnNetFinishedListener<TrailersEntity>): Disposable {
         return netClient
                 .getTrailers(String.format(UrlDefinition.GET_TRAILERS, id))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ listener.onSuccess(it) }, { listener.onFail(it) })
+                .subscribe({ listener.onSuccess(it) }, { listener.onFailed(it) })
     }
-    fun getReviews(id:String, listener: OnNetFinishedListener<ReviewsEntity>): Disposable {
+
+    /**
+     * 获取评论信息
+     *
+     * @param id 电影 id
+     * @param listener 请求回调接口
+     */
+    fun getReviews(id: String, listener: OnNetFinishedListener<ReviewsEntity>): Disposable {
         return netClient
                 .getReviews(String.format(UrlDefinition.GET_REVIEWS, id))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ listener.onSuccess(it) }, { listener.onFail(it) })
+                .subscribe({ listener.onSuccess(it) }, { listener.onFailed(it) })
     }
 
 }

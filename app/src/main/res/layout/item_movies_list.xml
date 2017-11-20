@@ -10,7 +10,7 @@
 
         <variable
             name="handler"
-            type="com.wj.kotlintest.handler.MoviesItemHandler"/>
+            type="com.wj.kotlintest.fragment.MoviesListFragment.MoviesListHandler"/>
     </data>
 
     <RelativeLayout
@@ -24,8 +24,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="@null"
-            tools:src="@mipmap/img_default"
-            android:scaleType="centerCrop"/>
+            android:scaleType="centerCrop"
+            tools:src="@mipmap/img_default"/>
 
         <View
             android:id="@+id/v"

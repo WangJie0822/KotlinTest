@@ -72,9 +72,18 @@ class RootHandler(private val listener: OnBaseClickListener) : BaseObservable() 
     }
 }
 
+/**
+ * 根布局点击事件监听接口
+ */
 interface OnBaseClickListener {
 
+    /**
+     * 无数据界面点击
+     */
     fun onNoDataClick()
 
+    /**
+     * 网络异常界面点击
+     */
     fun onNetErrorClick()
 }

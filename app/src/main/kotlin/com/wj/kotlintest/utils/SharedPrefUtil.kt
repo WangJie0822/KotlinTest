@@ -8,8 +8,9 @@ import com.wj.kotlintest.application.MyApplication
  */
 object SharedPrefUtil {
 
+    /** SharedPreferences 文件名 */
     private val SP_FILE_NAME = "KOTLIN_SHARED_PREF"
-
+    /** SharedPreferences 对象 */
     private val sharedPref = MyApplication.INSTANCE.getSharedPreferences(SP_FILE_NAME, Context.MODE_PRIVATE)
 
     /**
@@ -30,9 +31,7 @@ object SharedPrefUtil {
      *
      * @return 字符串
      */
-    fun getString(key: String, defValue: String): String? {
-        return sharedPref.getString(key, defValue)
-    }
+    fun getString(key: String, defValue: String) = sharedPref.getString(key, defValue)
 
     /**
      * 保存整形
@@ -52,9 +51,7 @@ object SharedPrefUtil {
      *
      * @return 整形
      */
-    fun getInteger(key: String, defValue: Int): Int {
-        return sharedPref.getInt(key, defValue)
-    }
+    fun getInteger(key: String, defValue: Int) = sharedPref.getInt(key, defValue)
 
     /**
      * 保存布尔类型
@@ -74,8 +71,6 @@ object SharedPrefUtil {
      *
      * @return 布尔值
      */
-    fun getBoolean(key: String, defValue: Boolean): Boolean {
-        return sharedPref.getBoolean(key, defValue)
-    }
+    fun getBoolean(key: String, defValue: Boolean) = sharedPref.getBoolean(key, defValue)
 
 }

@@ -12,11 +12,12 @@ import dagger.android.AndroidInjector
 import dagger.android.support.DaggerApplication
 
 /**
- * Application 类
+ * Application 类，集成 Dagger2 继承[DaggerApplication]
  */
 class MyApplication : DaggerApplication() {
 
     companion object {
+        /** MyApplication 实例对象 */
         @SuppressLint("StaticFieldLeak")
         lateinit var INSTANCE: MyApplication
     }
@@ -24,20 +25,22 @@ class MyApplication : DaggerApplication() {
     override fun onCreate() {
         super.onCreate()
 
+        // 保存实例对象
         INSTANCE = this
 
+        // 初始化 Logger
         Logger.addLogAdapter(object : AndroidLogAdapter() {
             override fun isLoggable(priority: Int, tag: String?) = BuildConfig.DEBUG
         })
 
-        DataBindingUtil.setDefaultComponent(object : DataBindingComponent{
+        // 配置 DataBindingAdapter
+        DataBindingUtil.setDefaultComponent(object : DataBindingComponent {
             override fun getDataBindingAdapter() = DataBindingAdapter
         })
 
     }
 
-    override fun applicationInjector(): AndroidInjector<out DaggerApplication> {
-        return DaggerApplicationSub.builder().create(this)
-    }
+    override fun applicationInjector()
+            : AndroidInjector<MyApplication> = DaggerApplicationSub.builder().create(this)
 
 }

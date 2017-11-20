@@ -24,7 +24,5 @@ class MyAppGlideModule : AppGlideModule(){
 //        registry?.replace(GlideUrl::class.java, InputStream::class.java, Okhttp)
     }
 
-    override fun isManifestParsingEnabled(): Boolean {
-        return false
-    }
+    override fun isManifestParsingEnabled() = false
 }

@@ -4,10 +4,16 @@ import com.google.gson.annotations.SerializedName
 import com.wj.kotlintest.base.BaseEntity
 import com.wj.kotlintest.net.UrlDefinition
 
+/**
+ * 特别收录列表实体类
+ */
 data class TrailersEntity(
-		@SerializedName("id") val id: Int = 0, //278
-		@SerializedName("results") val results: ArrayList<Result> = arrayListOf()
-): BaseEntity() {
+        @SerializedName("id") val id: Int = 0, //278
+        @SerializedName("results") val results: ArrayList<Result> = arrayListOf()
+) : BaseEntity() {
+    /**
+     * 特别收录信息实体类
+     */
     data class Result(
             @SerializedName("id") val id: String = "", //533ec653c3a3685448000249
             @SerializedName("iso_639_1") val iso6391: String = "", //en

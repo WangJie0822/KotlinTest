@@ -20,10 +20,12 @@ class MainActivity : BaseActivity<BlankPresenter, ActivityMainBinding>() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // 添加 电影列表 Fragment 到集合
         val mFrags = ArrayList<Fragment>()
         mFrags.add(MoviesListFragment.actionCreate(MOVIES_TYPE_HIGHEST_RATE))
         mFrags.add(MoviesListFragment.actionCreate(MOVIES_TYPE_POPULAR))
 
+        // 设置适配器
         mBinding.vp.adapter = FragVpAdapter.Builder()
                 .manager(supportFragmentManager)
                 .frags(mFrags)
