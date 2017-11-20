@@ -11,12 +11,12 @@ import com.wj.kotlintest.BR
 /**
  * RecyclerView 适配器基类
  *
- * @param E  数据类型
  * @param VH ViewHolder 类型，继承 [BaseRvViewHolder]
- * @param H  事件处理类型 Handler
  * @param DB  DataBinding 类型，与 VH 一致 继承 [ViewDataBinding]
+ * @param H  事件处理类型 Handler
+ * @param E  数据类型
  */
-abstract class BaseRvAdapter<E, VH : BaseRvViewHolder<*, *>, H, in DB : ViewDataBinding> : RecyclerView.Adapter<VH>() {
+abstract class BaseRvAdapter<VH : BaseRvViewHolder<DB, E>, DB : ViewDataBinding, H, E> : RecyclerView.Adapter<VH>() {
 
     companion object {
         /** 布局类型-头布局  */
@@ -155,7 +155,9 @@ abstract class BaseRvAdapter<E, VH : BaseRvViewHolder<*, *>, H, in DB : ViewData
      * @param holder ViewHolder
      * @param entity   数据对象
      */
-    protected abstract fun convert(holder: VH, entity: E)
+    protected fun convert(holder: VH, entity: E) {
+        holder.bindData(entity)
+    }
 
     /**
      * 创建ViewHolder 使用头布局时必须重写
