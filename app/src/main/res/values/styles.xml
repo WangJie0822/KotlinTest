@@ -21,6 +21,11 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <!-- 主界面主题，处理 SwipeBack 在 4.4 版本上问题 -->
+    <style name="MainTheme" parent="AppTheme">
+        <item name="android:windowIsTranslucent">false</item>
+    </style>
+
     <style name="DetailsTheme" parent="AppTheme"/>
 
 </resources>

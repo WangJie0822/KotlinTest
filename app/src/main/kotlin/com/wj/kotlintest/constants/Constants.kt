@@ -2,8 +2,11 @@
 
 package com.wj.kotlintest.constants
 
-/** 闪屏界面跳转演示 */
+/** 闪屏界面跳转延时 */
 val SPLASH_TIME_DELAY = 200L
+
+/** 应用退出返回点击间隔 */
+val APP_EXIT_PRESS_BACK_INTERVAL = 1000L
 
 /** 电影列表 Fragment - 电影类型 Key */
 val MOVIES_LIST_TYPE = "movies_list_type"

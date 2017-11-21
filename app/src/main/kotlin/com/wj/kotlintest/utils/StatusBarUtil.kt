@@ -14,6 +14,8 @@ import android.widget.LinearLayout
 
 /**
  * 状态栏设置工具类
+ *
+ * **在系统19及其以上能起效果，19以下无效，系统版本21及其以上不推荐使用**
  */
 object StatusBarUtil {
 
@@ -27,7 +29,7 @@ object StatusBarUtil {
      *
      * @param activity           Activity 对象
      * @param colorResId         状态栏颜色资源id
-     * @param alpha              状态栏透明度 0~255
+     * @param alpha              状态栏透明度 0~255 0： 不透明 255： 透明
      */
     fun setResColor(activity: Activity, @ColorRes colorResId: Int, alpha: Int = DEFAULT_STATUS_BAR_ALPHA) {
         @Suppress("DEPRECATION")

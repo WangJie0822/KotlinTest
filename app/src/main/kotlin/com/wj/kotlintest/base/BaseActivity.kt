@@ -3,6 +3,7 @@ package com.wj.kotlintest.base
 import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
 import android.graphics.drawable.AnimationDrawable
+import android.os.Build
 import android.os.Bundle
 import android.support.annotation.DrawableRes
 import android.support.annotation.StringRes
@@ -17,6 +18,7 @@ import com.wj.kotlintest.utils.AppManager
 import com.wj.kotlintest.utils.StatusBarUtil
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
+
 
 /**
  * Activity 基类
@@ -124,9 +126,15 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
 
     /**
      * 初始化状态栏
-     * **建议使用主题而非[StatusBarUtil]**
+     *
+     * **系统版本21以上使用主题而非[StatusBarUtil]**
      */
-    open protected fun initStatusBar() {}
+    open protected fun initStatusBar() {
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+            // 系统版本为19时使用
+            StatusBarUtil.setResColor(mContext, R.color.colorTheme, 0)
+        }
+    }
 
     /**
      * 显示标题栏
