@@ -10,12 +10,12 @@ import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
 import android.view.View
 import android.widget.TextView
+import com.google.gson.Gson
 import com.wj.kotlintest.BR
 import com.wj.kotlintest.R
 import com.wj.kotlintest.adapter.ReviewsAdapter
 import com.wj.kotlintest.adapter.TrailersAdapter
 import com.wj.kotlintest.base.BaseSwipeBackActivity
-import com.wj.kotlintest.constants.FAVORITE_MOVIES
 import com.wj.kotlintest.databinding.ActivityMoviesDetailsBinding
 import com.wj.kotlintest.entity.MoviesEntity
 import com.wj.kotlintest.entity.ReviewsEntity
@@ -84,7 +84,7 @@ class MoviesDetailsActivity
         mBinding.handler?.description = movies.overview
 
         // 获取保存的收藏状态
-        mBinding.handler?.favorite = SharedPrefUtil.getBoolean(FAVORITE_MOVIES + movies.id, false)
+        mBinding.handler?.favorite = "" != SharedPrefUtil.getString(movies.id.toString(), "")
 
         // 获取特别收录信息
         presenter.getTrailers()
@@ -232,7 +232,7 @@ class MoviesDetailsActivity
             // 是否收藏标记取反
             favorite = !favorite
             // 收藏状态保存到 SharedPref
-            SharedPrefUtil.putBoolean(FAVORITE_MOVIES + movies.id, favorite)
+            SharedPrefUtil.putString(movies.id.toString(), Gson().toJson(movies))
             // 创建 Snackbar 对象
             val snackbar = Snackbar.make(v, str, Snackbar.LENGTH_SHORT)
             // 设置 Snackbar 背景色为主题色
