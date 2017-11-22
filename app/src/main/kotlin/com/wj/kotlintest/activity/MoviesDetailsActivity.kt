@@ -25,6 +25,7 @@ import com.wj.kotlintest.mvp.MoviesDetailsPresenter
 import com.wj.kotlintest.mvp.MoviesDetailsView
 import com.wj.kotlintest.net.UrlDefinition
 import com.wj.kotlintest.utils.SharedPrefUtil
+import com.wj.kotlintest.utils.ToastUtil
 import javax.inject.Inject
 
 /**
@@ -219,7 +220,9 @@ class MoviesDetailsActivity
 
         /**
          * 收藏点击事件处理。
+         *
          * 点击加入、取消收藏
+         *
          * @param v [android.support.design.widget.FloatingActionButton] 对象
          */
         fun onFavoriteClick(v: View) {
@@ -240,6 +243,13 @@ class MoviesDetailsActivity
             snackbar.view.setBackgroundColor(resources.getColor(R.color.colorTheme))
             // 显示 Snackbar
             snackbar.show()
+        }
+
+        /**
+         * 收藏长按事件处理
+         */
+        fun onFavoriteLongClick() {
+            ToastUtil.show("Long Click")
         }
     }
 
