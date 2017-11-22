@@ -26,7 +26,6 @@
         <activity
             android:name=".activity.MoviesDetailsActivity"
             android:theme="@style/DetailsTheme"/>
-        <activity android:name=".activity.FavoriteActivity"/>
     </application>
 
 </manifest>

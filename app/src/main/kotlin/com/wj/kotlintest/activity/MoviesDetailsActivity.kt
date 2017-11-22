@@ -241,14 +241,6 @@ class MoviesDetailsActivity
             // 显示 Snackbar
             snackbar.show()
         }
-
-        /**
-         * 收藏按钮长点击事件监听
-         */
-        fun onFavoriteLongClick() {
-            // 跳转最喜欢的电影列表界面
-            FavoriteActivity.actionStart(mContext)
-        }
     }
 
 }
