@@ -15,5 +15,8 @@ val MOVIES_TYPE_HIGHEST_RATE = 0x2342
 /** 电影列表类型 - 最流行 */
 val MOVIES_TYPE_POPULAR = 0x2343
 
+/** 喜欢的电影- SharedPref 标记*/
+val FAVORITE_KEY = "favorite_"
+
 /** 网络请求返回码-成功 */
 val NET_RESPONSE_SUCCESS = 200
