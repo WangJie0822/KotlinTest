@@ -73,4 +73,11 @@ object SharedPrefUtil {
      */
     fun getBoolean(key: String, defValue: Boolean) = sharedPref.getBoolean(key, defValue)
 
+    /**
+     * 获取 SharedPref 中所有数据集合
+     *
+     * @return 保存的所有数据集合
+     */
+    fun getAll() = sharedPref.all
+
 }
