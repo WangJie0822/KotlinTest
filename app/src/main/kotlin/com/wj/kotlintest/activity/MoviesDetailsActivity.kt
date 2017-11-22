@@ -12,6 +12,7 @@ import android.view.View
 import android.widget.TextView
 import com.google.gson.Gson
 import com.wj.kotlintest.BR
+import com.wj.kotlintest.FavoriteActivity
 import com.wj.kotlintest.R
 import com.wj.kotlintest.adapter.ReviewsAdapter
 import com.wj.kotlintest.adapter.TrailersAdapter
@@ -25,7 +26,6 @@ import com.wj.kotlintest.mvp.MoviesDetailsPresenter
 import com.wj.kotlintest.mvp.MoviesDetailsView
 import com.wj.kotlintest.net.UrlDefinition
 import com.wj.kotlintest.utils.SharedPrefUtil
-import com.wj.kotlintest.utils.ToastUtil
 import javax.inject.Inject
 
 /**
@@ -249,7 +249,8 @@ class MoviesDetailsActivity
          * 收藏长按事件处理
          */
         fun onFavoriteLongClick() {
-            ToastUtil.show("Long Click")
+            // 跳转最喜欢的电影列表
+            FavoriteActivity.actionStart(mContext)
         }
     }
 

@@ -2,6 +2,7 @@ package com.wj.kotlintest.dagger
 
 import com.orhanobut.logger.Logger
 import com.wj.kotlintest.BuildConfig
+import com.wj.kotlintest.FavoriteActivity
 import com.wj.kotlintest.activity.MainActivity
 import com.wj.kotlintest.activity.MoviesDetailsActivity
 import com.wj.kotlintest.activity.SplashActivity
@@ -30,6 +31,9 @@ abstract class ActivityModule {
 
     @ContributesAndroidInjector
     abstract fun contributeMoviesDetailsActivity(): MoviesDetailsActivity
+
+    @ContributesAndroidInjector
+    abstract fun contributeFavoriteActivity(): FavoriteActivity
 }
 
 /**
