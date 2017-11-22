@@ -10,8 +10,8 @@ import com.wj.kotlintest.base.BaseRvAdapter
 import com.wj.kotlintest.base.BaseRvViewHolder
 import com.wj.kotlintest.databinding.ItemMoviesListBinding
 import com.wj.kotlintest.entity.MoviesEntity
-import com.wj.kotlintest.fragment.MoviesListFragment
 import com.wj.kotlintest.glide.GlideApp
+import com.wj.kotlintest.handler.MoviesListHandler
 import com.wj.kotlintest.net.UrlDefinition
 import javax.inject.Inject
 
@@ -21,7 +21,7 @@ import javax.inject.Inject
 class MoviesListAdapter @Inject constructor()
     : BaseRvAdapter<MoviesListAdapter.ViewHolder,
         ItemMoviesListBinding,
-        MoviesListFragment.MoviesListHandler,
+        MoviesListHandler,
         MoviesEntity>() {
 
     override fun layoutResID() = R.layout.item_movies_list

@@ -12,6 +12,7 @@ import com.wj.kotlintest.constants.MOVIES_TYPE_POPULAR
 import com.wj.kotlintest.databinding.FragmentMoviesListBinding
 import com.wj.kotlintest.entity.MoviesEntity
 import com.wj.kotlintest.entity.MoviesListEntity
+import com.wj.kotlintest.handler.MoviesListHandler
 import com.wj.kotlintest.mvp.MoviesListPresenter
 import com.wj.kotlintest.mvp.MoviesListView
 import com.wj.swipelayout.OnRefreshListener
@@ -54,7 +55,7 @@ class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListB
 
         // 绑定数据、Handler
         adapter.data = arrayListOf()
-        adapter.handler = MoviesListHandler()
+        adapter.handler = MoviesListActivityHandler()
 
         // 设置 RecyclerView 布局管理、适配器
         mBinding.swipeTarget.layoutManager = GridLayoutManager(mContext, 2)
@@ -110,14 +111,14 @@ class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListB
     /**
      * 电影列表界面事件处理类
      */
-    inner class MoviesListHandler {
+    inner class MoviesListActivityHandler: MoviesListHandler {
 
         /**
          * 电影列表条目点击事件
          *
          * @param entity 条目对应数据对象
          */
-        fun onMoviesItemClick(entity: MoviesEntity) {
+        override fun onMoviesItemClick(entity: MoviesEntity) {
             MoviesDetailsActivity.actionStart(mContext, entity)
         }
     }

@@ -10,7 +10,7 @@
 
         <variable
             name="handler"
-            type="com.wj.kotlintest.fragment.MoviesListFragment.MoviesListHandler"/>
+            type="com.wj.kotlintest.handler.MoviesListHandler"/>
     </data>
 
     <RelativeLayout
