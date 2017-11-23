@@ -61,18 +61,6 @@ class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListB
         mBinding.swipeTarget.layoutManager = GridLayoutManager(mContext, 2)
         mBinding.swipeTarget.adapter = adapter
 
-        /**
-         * 初始化数据
-         */
-        fun initData() {
-            // 根据
-            when (moviesType) {
-                MOVIES_TYPE_HIGHEST_RATE -> presenter.getHighestRatedMovies()
-                MOVIES_TYPE_POPULAR -> presenter.getPopularMovies()
-                else -> presenter.getHighestRatedMovies()
-            }
-        }
-
         // 设置下拉刷新监听
         mBinding.swipe.refreshListener = object : OnRefreshListener {
             override fun onRefresh() {
@@ -98,14 +86,31 @@ class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListB
         })
     }
 
-    override fun onListComplete() {
+    override fun listComplete() {
         mBinding.swipe.onComplete()
+    }
+
+    override fun onNetErrorClick() {
+        super.onNetErrorClick()
+        initData()
     }
 
     override fun notifyData(data: MoviesListEntity) {
         // 加载完成，更新界面
         adapter.data.addAll(data.results)
         adapter.notifyDataSetChanged()
+    }
+
+    /**
+     * 初始化数据
+     */
+    fun initData() {
+        // 根据
+        when (moviesType) {
+            MOVIES_TYPE_HIGHEST_RATE -> presenter.getHighestRatedMovies()
+            MOVIES_TYPE_POPULAR -> presenter.getPopularMovies()
+            else -> presenter.getHighestRatedMovies()
+        }
     }
 
     /**

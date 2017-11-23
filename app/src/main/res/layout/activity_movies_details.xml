@@ -176,10 +176,10 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:onClick="@{(v) -> handler.onFavoriteClick(v)}"
+            android:onLongClick="@{() -> handler.onFavoriteLongClick()}"
             android:src="@drawable/selector_favorite"
             app:layout_anchor="@id/appBar"
             app:layout_anchorGravity="bottom|end"
-            app:long_click="@{() -> handler.onFavoriteLongClick()}"
             app:rippleColor="@android:color/white"
             app:selected="@{handler.favorite}"/>
 

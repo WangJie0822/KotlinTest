@@ -26,7 +26,9 @@
         <activity
             android:name=".activity.MoviesDetailsActivity"
             android:theme="@style/DetailsTheme"/>
-        <activity android:name=".FavoriteActivity"/>
+        <activity
+            android:name=".FavoriteActivity"
+            android:launchMode="singleTask"/>
     </application>
 
 </manifest>

@@ -174,7 +174,7 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
             if (!it.showNetError) {
                 it.showNetError = true
             }
-            onListComplete()
+            listComplete()
         }
     }
 
@@ -195,7 +195,7 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
             if (!it.showNoData) {
                 it.showNoData = true
             }
-            onListComplete()
+            listComplete()
         }
     }
 
@@ -236,14 +236,14 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
                 (drawable as? AnimationDrawable)?.stop()
                 it.showLoading = false
             }
-            onListComplete()
+            listComplete()
         }
     }
 
     /**
      * 使用SwipeToLoadView时重写，完成刷新步骤
      */
-    open protected fun onListComplete() {}
+    open protected fun listComplete() {}
 
     /**
      * 标题栏左侧点击事件，默认结束当前界面

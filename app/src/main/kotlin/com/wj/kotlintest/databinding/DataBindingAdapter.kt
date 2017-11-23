@@ -71,7 +71,7 @@ object DataBindingAdapter {
      * @param v View 对象
      * @param listener 事件监听对象
      */
-    @BindingAdapter("app:long_click")
+    @BindingAdapter("android:onLongClick")
     fun longClick(v: View, listener: OnAdapterLongClickListener) {
         v.setOnLongClickListener {
             listener.onLongClick()

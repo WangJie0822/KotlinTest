@@ -4,15 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.wj.kotlintest.FavoriteActivity">
 
-    <RelativeLayout
+    <com.wj.swipelayout.SwipeToLoadLayout
         android:layout_width="match_parent"
+        android:id="@+id/swipe"
         android:layout_height="match_parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="Hello World!"/>
+        <com.wj.swipelayout.RefreshView
+            android:id="@id/swipe_refresh_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-    </RelativeLayout>
+        <android.support.v7.widget.RecyclerView
+            android:id="@id/swipe_target"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </com.wj.swipelayout.SwipeToLoadLayout>
 
 </layout>   

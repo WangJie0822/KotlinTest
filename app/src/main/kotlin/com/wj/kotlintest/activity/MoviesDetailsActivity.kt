@@ -17,6 +17,7 @@ import com.wj.kotlintest.R
 import com.wj.kotlintest.adapter.ReviewsAdapter
 import com.wj.kotlintest.adapter.TrailersAdapter
 import com.wj.kotlintest.base.BaseSwipeBackActivity
+import com.wj.kotlintest.constants.FAVORITE_KEY
 import com.wj.kotlintest.databinding.ActivityMoviesDetailsBinding
 import com.wj.kotlintest.entity.MoviesEntity
 import com.wj.kotlintest.entity.ReviewsEntity
@@ -85,7 +86,7 @@ class MoviesDetailsActivity
         mBinding.handler?.description = movies.overview
 
         // 获取保存的收藏状态
-        mBinding.handler?.favorite = "" != SharedPrefUtil.getString(movies.id.toString(), "")
+        mBinding.handler?.favorite = "" != SharedPrefUtil.getString(FAVORITE_KEY + movies.id, "")
 
         // 获取特别收录信息
         presenter.getTrailers()
@@ -235,7 +236,7 @@ class MoviesDetailsActivity
             // 是否收藏标记取反
             favorite = !favorite
             // 收藏状态保存到 SharedPref
-            SharedPrefUtil.putString(movies.id.toString(), Gson().toJson(movies))
+            SharedPrefUtil.putString(FAVORITE_KEY + "_" + movies.id, Gson().toJson(movies))
             // 创建 Snackbar 对象
             val snackbar = Snackbar.make(v, str, Snackbar.LENGTH_SHORT)
             // 设置 Snackbar 背景色为主题色
