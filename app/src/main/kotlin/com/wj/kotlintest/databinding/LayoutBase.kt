@@ -11,49 +11,57 @@ class RootHandler(private val listener: OnBaseClickListener) : BaseObservable() 
 
     /** 标记-是否显示标题栏  */
     @get:Bindable
-    var showTitle: Boolean = false
-        set(showTitle) {
-            field = showTitle
+    var showTitle = false
+        set(value) {
+            field = value
             notifyPropertyChanged(BR.showTitle)
         }
 
     /** 标记-是否显示标题  */
     @get:Bindable
-    var showTvTitle: Boolean = false
-        set(showTvTitle) {
-            field = showTvTitle
+    var showTvTitle = false
+        set(value) {
+            field = value
             notifyPropertyChanged(BR.showTvTitle)
         }
 
     /** 标记-是否显示网络异常  */
     @get:Bindable
-    var showNetError: Boolean = false
-        set(showNetError) {
-            field = showNetError
+    var showNetError = false
+        set(value) {
+            field = value
             notifyPropertyChanged(BR.showNetError)
         }
 
     /** 标记-是否显示无数据  */
     @get:Bindable
-    var showNoData: Boolean = false
-        set(showNoData) {
-            field = showNoData
+    var showNoData = false
+        set(value) {
+            field = value
             notifyPropertyChanged(BR.showNoData)
         }
 
     /** 标记-是否显示加载中  */
     @get:Bindable
-    var showLoading: Boolean = false
-        set(showLoading) {
-            field = showLoading
+    var showLoading = false
+        set(value) {
+            field = value
             notifyPropertyChanged(BR.showLoading)
+        }
+
+    /** 标记- Toolbar 能否隐藏 */
+    @get:Bindable
+    var canToolbarHide = false
+        set(value) {
+            field = value
+            notifyPropertyChanged(BR.canToolbarHide)
         }
 
     /** 标题文本  */
     @get:Bindable
-    var tvTitle: String? = null
-        set(tvTitle) {
-            field = tvTitle
+    var tvTitle = ""
+        set(value) {
+            field = value
             notifyPropertyChanged(BR.tvTitle)
         }
 

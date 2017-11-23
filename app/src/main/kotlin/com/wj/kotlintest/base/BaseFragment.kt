@@ -35,7 +35,7 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     protected lateinit var presenter: P
 
     /** 根布局 DataBinding 对象 */
-    protected lateinit var rootBinding: LayoutBaseBinding
+    protected lateinit var baseBinding: LayoutBaseBinding
     /** 当前界面布局 DataBinding 对象 */
     protected lateinit var mBinding: DB
 
@@ -57,12 +57,12 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         // 加载根布局，初始化 DataBinding
-        rootBinding = DataBindingUtil.inflate(
+        baseBinding = DataBindingUtil.inflate(
                 LayoutInflater.from(mContext),
                 R.layout.layout_base, null, false
         )
         // 绑定事件处理
-        rootBinding.handler = RootHandler(this)
+        baseBinding.handler = RootHandler(this)
 
         // 初始化标题栏
         initTitleBar()
@@ -74,11 +74,11 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
         )
 
         // 将当前布局添加到根布局
-        rootBinding.flContent.removeAllViews()
-        rootBinding.flContent.addView(mBinding.root)
+        baseBinding.flContent.removeAllViews()
+        baseBinding.flContent.addView(mBinding.root)
 
         // 设置左侧按钮点击事件监听
-        rootBinding.toolbar.setNavigationOnClickListener {
+        baseBinding.toolbar.setNavigationOnClickListener {
             onLeftClick()
         }
 
@@ -86,7 +86,7 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
         initView()
 
         // 设置布局
-        return rootBinding.root
+        return baseBinding.root
     }
 
     /**
@@ -123,10 +123,21 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     open protected fun initTitleBar() {}
 
     /**
-     * 显示标题栏
+     * 设置标题栏显示
+     *
+     * @param showTitle 是否显示
      */
-    protected fun showTitle() {
-        rootBinding.handler?.showTitle = true
+    protected fun showTitle(showTitle: Boolean = true) {
+        baseBinding.handler?.showTitle = showTitle
+    }
+
+    /**
+     * 设置标题栏能否隐藏
+     *
+     * @param canHide 能否隐藏
+     */
+    protected fun setToolbarHide(canHide: Boolean = true) {
+        baseBinding.handler?.canToolbarHide = canHide
     }
 
     /**
@@ -144,8 +155,8 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
      * @param str      标题文本
      */
     protected fun setTitleStr(str: String) {
-        rootBinding.handler?.showTvTitle = true
-        rootBinding.handler?.tvTitle = str
+        baseBinding.handler?.showTvTitle = true
+        baseBinding.handler?.tvTitle = str
     }
 
     /**
@@ -154,20 +165,20 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
      * @param resID     标题栏左侧图标资源id，默认返回按钮
      */
     protected fun setIvLeft(@DrawableRes resID: Int = R.mipmap.arrow_left_white) {
-        rootBinding.toolbar.setNavigationIcon(resID)
+        baseBinding.toolbar.setNavigationIcon(resID)
     }
 
     /**
      * 重写BaseMvpView中方法，网络异常时调用
      */
     override fun netError() {
-        val handler = rootBinding.handler
+        val handler = baseBinding.handler
         handler?.let {
             if (it.showNoData) {
                 it.showNoData = false
             }
             if (it.showLoading) {
-                val drawable = rootBinding.ivLoading.drawable
+                val drawable = baseBinding.ivLoading.drawable
                 (drawable as? AnimationDrawable)?.stop()
                 it.showLoading = false
             }
@@ -182,13 +193,13 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
      * 重写BaseMvpView中方法，无数据时调用
      */
     override fun noData() {
-        val handler = rootBinding.handler
+        val handler = baseBinding.handler
         handler?.let {
             if (it.showNetError) {
                 it.showNetError = false
             }
             if (it.showLoading) {
-                val drawable = rootBinding.ivLoading.drawable
+                val drawable = baseBinding.ivLoading.drawable
                 (drawable as? AnimationDrawable)?.stop()
                 it.showLoading = false
             }
@@ -203,7 +214,7 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
      * 重写BaseMvpView中方法，加载数据时调用
      */
     override fun loading() {
-        val handler = rootBinding.handler
+        val handler = baseBinding.handler
         handler?.let {
             if (it.showNetError) {
                 it.showNetError = false
@@ -212,7 +223,7 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
                 it.showNoData = false
             }
             if (!it.showLoading) {
-                val drawable = rootBinding.ivLoading.drawable
+                val drawable = baseBinding.ivLoading.drawable
                 (drawable as? AnimationDrawable)?.start()
                 it.showLoading = true
             }
@@ -223,7 +234,7 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
      * 重写BaseMvpView中方法，网络请求结束后调用，隐藏其他界面
      */
     override fun netFinished() {
-        val handler = rootBinding.handler
+        val handler = baseBinding.handler
         handler?.let {
             if (it.showNetError) {
                 it.showNetError = false
@@ -232,7 +243,7 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
                 it.showNoData = false
             }
             if (it.showLoading) {
-                val drawable = rootBinding.ivLoading.drawable
+                val drawable = baseBinding.ivLoading.drawable
                 (drawable as? AnimationDrawable)?.stop()
                 it.showLoading = false
             }

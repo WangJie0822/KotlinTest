@@ -71,8 +71,8 @@ class FavoriteActivity
     override fun initTitleBar() {
         showTitle()
         setIvLeft()
+        setToolbarHide()
         setTitleStr("最喜欢的电影")
-        rootBinding.handler?.canToolbarHide = true
     }
 
     override fun onNoDataClick() {
