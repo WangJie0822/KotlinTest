@@ -1,10 +1,10 @@
-package com.wj.kotlintest
+package com.wj.kotlintest.activity
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
-import com.wj.kotlintest.activity.MoviesDetailsActivity
+import com.wj.kotlintest.R
 import com.wj.kotlintest.adapter.MoviesListAdapter
 import com.wj.kotlintest.base.BaseSwipeBackActivity
 import com.wj.kotlintest.databinding.ActivityFavoriteBinding
@@ -69,6 +69,7 @@ class FavoriteActivity : BaseSwipeBackActivity<FavoritePresenter, ActivityFavori
 
     override fun initTitleBar() {
         showTitle()
+        setIvLeft()
         setTitleStr("最喜欢的电影")
     }
 
