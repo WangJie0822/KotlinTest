@@ -2,6 +2,8 @@ package com.wj.kotlintest.databinding
 
 import android.databinding.BindingAdapter
 import android.graphics.BitmapFactory
+import android.support.design.widget.AppBarLayout
+import android.support.v7.widget.Toolbar
 import android.view.View
 import android.widget.ImageView
 import com.wj.kotlintest.R
@@ -81,6 +83,21 @@ object DataBindingAdapter {
 
     interface OnAdapterLongClickListener {
         fun onLongClick()
+    }
+
+    @BindingAdapter("app:canHide")
+    fun canToolbarHide(v: View, canHide: Boolean) {
+        if (v is Toolbar) {
+            val layoutParams = v.layoutParams as? AppBarLayout.LayoutParams
+            layoutParams?.let {
+                it.scrollFlags = if (canHide) {
+                    AppBarLayout.LayoutParams.SCROLL_FLAG_SCROLL or AppBarLayout.LayoutParams.SCROLL_FLAG_ENTER_ALWAYS or AppBarLayout.LayoutParams.SCROLL_FLAG_SNAP
+                } else {
+                    0
+                }
+                v.layoutParams = it
+            }
+        }
     }
 
 }

@@ -18,7 +18,8 @@ import javax.inject.Inject
 /**
  * 最喜欢的电影列表界面
  */
-class FavoriteActivity : BaseSwipeBackActivity<FavoritePresenter, ActivityFavoriteBinding>(), FavoriteView {
+class FavoriteActivity
+    : BaseSwipeBackActivity<FavoritePresenter, ActivityFavoriteBinding>(), FavoriteView {
 
     /** 电影列表适配器 */
     @Inject
@@ -71,6 +72,7 @@ class FavoriteActivity : BaseSwipeBackActivity<FavoritePresenter, ActivityFavori
         showTitle()
         setIvLeft()
         setTitleStr("最喜欢的电影")
+        rootBinding.handler?.canToolbarHide = true
     }
 
     override fun onNoDataClick() {

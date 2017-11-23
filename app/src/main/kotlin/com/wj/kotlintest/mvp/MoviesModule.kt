@@ -88,14 +88,14 @@ class MoviesModule @Inject constructor() : BaseMVPModule() {
         for ((key, value) in allMap) {
             // 将关键字通过 "_" 下划线分割
             val splitKey = key.split("_")
-            if (splitKey[0] == FAVORITE_KEY) {
-                // 与最喜欢的电影关键字匹配
+            if (splitKey[0] == FAVORITE_KEY && "" != value) {
+                // 与最喜欢的电影关键字匹配，并且已收藏
                 val entity = Gson().fromJson(value.toString(), MoviesEntity::class.java)
                 // 添加到集合保存
                 moviesList.add(entity)
             }
         }
-        return  moviesList
+        return moviesList
     }
 
 }
