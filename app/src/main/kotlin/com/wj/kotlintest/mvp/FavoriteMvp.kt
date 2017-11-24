@@ -1,4 +1,4 @@
-package com.wj.kotlintest.mvp;
+package com.wj.kotlintest.mvp
 
 import com.wj.kotlintest.base.BaseMVPPresenter
 import com.wj.kotlintest.base.BaseMVPView

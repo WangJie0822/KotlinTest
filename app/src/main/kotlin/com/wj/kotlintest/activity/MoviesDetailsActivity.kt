@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.LinearLayoutManager
+import android.view.Gravity
 import android.view.View
 import android.widget.TextView
 import com.google.gson.Gson
@@ -15,13 +16,14 @@ import com.wj.kotlintest.BR
 import com.wj.kotlintest.R
 import com.wj.kotlintest.adapter.ReviewsAdapter
 import com.wj.kotlintest.adapter.TrailersAdapter
-import com.wj.kotlintest.base.BaseSwipeBackActivity
+import com.wj.kotlintest.base.BaseCollapsingSwipeBackActivity
 import com.wj.kotlintest.constants.FAVORITE_KEY
 import com.wj.kotlintest.databinding.ActivityMoviesDetailsBinding
+import com.wj.kotlintest.databinding.OnFloatingClickListener
+import com.wj.kotlintest.databinding.OnFloatingLongClickListener
 import com.wj.kotlintest.entity.MoviesEntity
 import com.wj.kotlintest.entity.ReviewsEntity
 import com.wj.kotlintest.entity.TrailersEntity
-import com.wj.kotlintest.glide.GlideApp
 import com.wj.kotlintest.mvp.MoviesDetailsPresenter
 import com.wj.kotlintest.mvp.MoviesDetailsView
 import com.wj.kotlintest.net.UrlDefinition
@@ -32,7 +34,7 @@ import javax.inject.Inject
  * 电影详情
  */
 class MoviesDetailsActivity
-    : BaseSwipeBackActivity<MoviesDetailsPresenter, ActivityMoviesDetailsBinding>(),
+    : BaseCollapsingSwipeBackActivity<MoviesDetailsPresenter, ActivityMoviesDetailsBinding>(),
         MoviesDetailsView {
 
     /** 特别收录适配器 */
@@ -70,27 +72,61 @@ class MoviesDetailsActivity
         // 绑定 Handler
         mBinding.handler = MoviesDetailsHandler()
 
-        // 设置 Toolbar
-        setSupportActionBar(mBinding.toolbar)
-        // 显示返回按钮
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
         // 显示页面数据
-        mBinding.collapsingToolbar.title = movies.title
-        GlideApp.with(mContext)
-                .load(UrlDefinition.POSTER_PATH + movies.backdrop_path)
-                .into(mBinding.ivHeader)
         mBinding.handler?.releaseDate = movies.release_date
         mBinding.handler?.rating = movies.vote_average
         mBinding.handler?.description = movies.overview
 
         // 获取保存的收藏状态
-        mBinding.handler?.favorite = "" != SharedPrefUtil.getString(FAVORITE_KEY + "_" + movies.id, "")
+        baseBinding.handler?.floatingSelected = "" != SharedPrefUtil.getString(FAVORITE_KEY + "_" + movies.id, "")
 
         // 获取特别收录信息
         presenter.getTrailers()
         // 获取评论信息
         presenter.getReviews()
+    }
+
+    override fun initTitleBar() {
+        showTitleBar()
+        setIvLeft()
+        setIvHeader(UrlDefinition.POSTER_PATH + movies.backdrop_path)
+        setTitleStr(movies.title.toString())
+    }
+
+    override fun initFloatingButton() {
+        showFloating()
+        setFloatingResID(R.drawable.selector_favorite)
+        setFloatingAnchor(R.id.appBar)
+        setFloatingGravity(Gravity.BOTTOM or Gravity.END)
+        setFloatingClick(object : OnFloatingClickListener {
+            override fun onClick() {
+                // 根据是否收藏获取提示文本
+                val str = if (isFloatingSelected()) {
+                    // 收藏状态保存到 SharedPref
+                    SharedPrefUtil.putString(FAVORITE_KEY + "_" + movies.id, "")
+                    "取消收藏"
+                } else {
+                    // 收藏状态保存到 SharedPref
+                    SharedPrefUtil.putString(FAVORITE_KEY + "_" + movies.id, Gson().toJson(movies))
+                    "加入收藏"
+                }
+                // 是否收藏标记取反
+                setFloatingSelected(!isFloatingSelected())
+                // 创建 Snackbar 对象
+                val snackbar = Snackbar.make(baseBinding.root, str, Snackbar.LENGTH_SHORT)
+                // 设置 Snackbar 背景色为主题色
+                @Suppress("DEPRECATION")
+                snackbar.view.setBackgroundColor(resources.getColor(R.color.colorTheme))
+                // 显示 Snackbar
+                snackbar.show()
+            }
+        })
+        setFloatingLongClick(object : OnFloatingLongClickListener {
+            override fun onLongClick() {
+                // 跳转最喜欢的电影列表
+                FavoriteActivity.actionStart(mContext)
+            }
+        })
     }
 
     override fun getMoviesId() = movies.id.toString()
@@ -137,14 +173,6 @@ class MoviesDetailsActivity
      * 电影详情界面数据绑定、事件处理类
      */
     inner class MoviesDetailsHandler : BaseObservable() {
-
-        /** 标记-电影是否收藏 */
-        @get:Bindable
-        var favorite = false
-            set(value) {
-                field = value
-                notifyPropertyChanged(BR.favorite)
-            }
 
         /** 电影上映时间 */
         var releaseDate: String? = null
@@ -217,43 +245,5 @@ class MoviesDetailsActivity
             // 开启 Activity
             startActivity(playVideoIntent)
         }
-
-        /**
-         * 收藏点击事件处理。
-         *
-         * 点击加入、取消收藏
-         *
-         * @param v [android.support.design.widget.FloatingActionButton] 对象
-         */
-        fun onFavoriteClick(v: View) {
-            // 根据是否收藏获取提示文本
-            val str = if (favorite) {
-                // 收藏状态保存到 SharedPref
-                SharedPrefUtil.putString(FAVORITE_KEY + "_" + movies.id, "")
-                "取消收藏"
-            } else {
-                // 收藏状态保存到 SharedPref
-                SharedPrefUtil.putString(FAVORITE_KEY + "_" + movies.id, Gson().toJson(movies))
-                "加入收藏"
-            }
-            // 是否收藏标记取反
-            favorite = !favorite
-            // 创建 Snackbar 对象
-            val snackbar = Snackbar.make(v, str, Snackbar.LENGTH_SHORT)
-            // 设置 Snackbar 背景色为主题色
-            @Suppress("DEPRECATION")
-            snackbar.view.setBackgroundColor(resources.getColor(R.color.colorTheme))
-            // 显示 Snackbar
-            snackbar.show()
-        }
-
-        /**
-         * 收藏长按事件处理
-         */
-        fun onFavoriteLongClick() {
-            // 跳转最喜欢的电影列表
-            FavoriteActivity.actionStart(mContext)
-        }
     }
-
 }

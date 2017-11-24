@@ -75,17 +75,6 @@ class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListB
         initData()
     }
 
-    override fun initTitleBar() {
-        // 显示标题栏
-        showTitle()
-        // 根据列表类型，设置标题文本
-        setTitleStr(when (moviesType) {
-            MOVIES_TYPE_HIGHEST_RATE -> "高评分电影"
-            MOVIES_TYPE_POPULAR -> "最流行电影"
-            else -> ""
-        })
-    }
-
     override fun listComplete() {
         mBinding.swipe.onComplete()
     }
@@ -116,7 +105,7 @@ class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListB
     /**
      * 电影列表界面事件处理类
      */
-    inner class MoviesListActivityHandler: MoviesListHandler {
+    inner class MoviesListActivityHandler : MoviesListHandler {
 
         /**
          * 电影列表条目点击事件

@@ -3,26 +3,29 @@ package com.wj.kotlintest.base
 import android.databinding.DataBindingUtil
 import android.databinding.ViewDataBinding
 import android.graphics.drawable.AnimationDrawable
+import android.os.Build
 import android.os.Bundle
 import android.support.annotation.DrawableRes
 import android.support.annotation.IdRes
-import android.support.annotation.LayoutRes
 import android.support.annotation.StringRes
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import com.wj.kotlintest.R
 import com.wj.kotlintest.databinding.*
-import dagger.android.support.DaggerFragment
+import com.wj.kotlintest.utils.AppManager
+import com.wj.kotlintest.utils.StatusBarUtil
+import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
 
+
 /**
- * Fragment基类
+ * Activity 基类
+ *
+ * @param P MVP Presenter 类，继承 [BaseMVPPresenter]，若没有，使用 [BlankPresenter]
+ * @param DB DataBinding 类，继承 [ViewDataBinding]
  */
-abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
-    : DaggerFragment(),
+abstract class BaseCollapsingActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
+    : DaggerAppCompatActivity(),
         BaseMVPView,
         OnBaseClickListener {
 
@@ -34,101 +37,100 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     protected lateinit var presenter: P
 
     /** 根布局 DataBinding 对象 */
-    protected lateinit var baseBinding: LayoutBaseBinding
+    protected lateinit var baseBinding: LayoutBaseCollapsingBinding
     /** 当前界面布局 DataBinding 对象 */
     protected lateinit var mBinding: DB
 
     /**
-     * 重写 onCreate() 方法，初始化当前 Context 对象，打印信息
+     * 重写 onCreate() 方法，添加了 Dagger2 注入、Activity 管理以及根布局等初始化操作
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         // 保存当前 Context 对象
-        mContext = activity as AppCompatActivity
+        mContext = this
 
-        Log.w("Fragment---->>", "create---->>$this")
-    }
-
-    /**
-     * 重写 onCreateView() 方法，加载根布局、当前界面布局及相关初始化
-     */
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        // 添加到 AppManager 应用管理
+        AppManager.addActivity(this)
 
         // 加载根布局，初始化 DataBinding
         baseBinding = DataBindingUtil.inflate(
                 LayoutInflater.from(mContext),
-                R.layout.layout_base, null, false
+                R.layout.layout_base_collapsing, null, false
         )
         // 绑定事件处理
-        baseBinding.handler = RootHandler(this)
+        baseBinding.handler = CollapsingRootHandler(this)
+    }
+
+    /**
+     * 重写 onDestroy() 方法，移除 Activity 管理以及 MVP 生命周期管理
+     */
+    override fun onDestroy() {
+
+        // 从应用管理移除当前 Activity 对象
+        AppManager.removeActivity(this)
+
+        // 界面销毁时，消费所有事件，清空引用
+        presenter.dispose()
+        presenter.detach()
+
+        super.onDestroy()
+    }
+
+    /**
+     * 重写 setContentView(layoutResID) 方法，使其支持 DataBinding 以及标题栏、状态栏初始化操作
+     */
+    override fun setContentView(layoutResID: Int) {
 
         // 加载布局，初始化 DataBinding
         mBinding = DataBindingUtil.inflate(
                 LayoutInflater.from(mContext),
-                layoutResID(), null, false
+                layoutResID, null, false
         )
 
         // 将当前布局添加到根布局
         baseBinding.flContent.removeAllViews()
         baseBinding.flContent.addView(mBinding.root)
 
+        // 设置布局
+        super.setContentView(baseBinding.root)
+
         // 初始化标题栏
         initTitleBar()
 
+        // 初始化状态栏
+        initStatusBar()
+
         // 初始化浮动按钮
         initFloatingButton()
-
-        // 初始化布局
-        initView()
-
-        // 设置布局
-        return baseBinding.root
     }
-
-    /**
-     * 重写 onDestroy() 方法，MVP 生命周期管理、打印信息
-     */
-    override fun onDestroy() {
-
-        // 界面销毁时，消费所有事件，清空引用
-        presenter.dispose()
-        presenter.detach()
-
-        // 打印信息
-        Log.w("Fragment---->>", "destroy---->$this")
-
-        super.onDestroy()
-    }
-
-    /**
-     * 绑定布局
-     *
-     * @return 当前界面布局id
-     */
-    @LayoutRes
-    protected abstract fun layoutResID(): Int
-
-    /**
-     * 初始化布局
-     */
-    protected abstract fun initView()
 
     /**
      *  设置 Toolbar
      */
     open protected fun setToolbar() {
-        setHasOptionsMenu(true)
         // 添加 Toolbar
-        mContext.setSupportActionBar(baseBinding.toolbar)
+        setSupportActionBar(baseBinding.toolbar)
         // 隐藏默认 title
-        mContext.supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
     }
 
     /**
-     * 初始化标题栏
+     * 初始化标题栏，抽象方法，子类实现标题栏自定义
      */
     open protected fun initTitleBar() {}
+
+    /**
+     * 初始化状态栏
+     *
+     * **系统版本21以上使用主题而非[StatusBarUtil]**
+     */
+    open protected fun initStatusBar() {
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+            // 系统版本为19时使用
+            StatusBarUtil.setResColor(mContext, R.color.colorTheme, 0)
+        }
+    }
 
     /**
      * 初始化浮动按钮
@@ -218,21 +220,13 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     }
 
     /**
-     * 设置标题栏能否隐藏
-     *
-     * @param canHide 能否隐藏
-     */
-    protected fun setToolbarHide(canHide: Boolean = true) {
-        baseBinding.handler?.canToolbarHide = canHide
-    }
-
-    /**
      * 设置标题文本
      *
      * @param strResID 标题文本资源id
      */
     protected fun setTitleStr(@StringRes strResID: Int) {
-        setTitleStr(getString(strResID))
+        baseBinding.handler?.showTitleStr = true
+        baseBinding.handler?.titleStr = getString(strResID)
     }
 
     /**
@@ -246,6 +240,24 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     }
 
     /**
+     * 设置顶部图片
+     *
+     * @param url 图片地址
+     */
+    protected fun setIvHeader(url: String) {
+        baseBinding.handler?.ivHeaderUrl = url
+    }
+
+    /**
+     * 设置顶部图片
+     *
+     * @param resID 图片资源id
+     */
+    protected fun setIvHeader(resID: Int) {
+        baseBinding.handler?.ivHeaderResID = resID
+    }
+
+    /**
      * 设置标题栏左侧图标，默认返回按钮
      *
      * @param resID     标题栏左侧图标资源id，默认返回按钮
@@ -253,7 +265,7 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     protected fun setIvLeft(@DrawableRes resID: Int = 0) {
         if (0 == resID) {
             // 使用默认图标
-            mContext.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
         } else {
             // 使用指定图标
             baseBinding.handler?.ivLeftResID = resID
@@ -344,14 +356,16 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     }
 
     /**
-     * 使用SwipeToLoadView时重写，完成刷新步骤
+     * 使用 [com.wj.swipelayout.SwipeToLoadLayout] 时重写，完成刷新步骤
      */
     open protected fun listComplete() {}
 
     /**
      * 标题栏左侧点击事件，默认结束当前界面
      */
-    override fun onLeftClick() {}
+    override fun onLeftClick() {
+        finish()
+    }
 
     /**
      * 无数据界面点击事件，默认显示加载中

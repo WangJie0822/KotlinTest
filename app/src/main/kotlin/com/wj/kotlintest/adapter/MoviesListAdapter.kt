@@ -30,8 +30,8 @@ class MoviesListAdapter @Inject constructor()
         override fun bindData(entity: MoviesEntity) {
             super.bindData(entity)
             // 获取 Context 对象
-            val ctx = mBinding.iv.context
-            GlideApp.with(ctx)
+            val context = mBinding.iv.context
+            GlideApp.with(context)
                     .asBitmap()
                     .placeholder(R.mipmap.img_default)
                     .load(UrlDefinition.POSTER_PATH + entity.backdrop_path)
@@ -45,7 +45,7 @@ class MoviesListAdapter @Inject constructor()
                                         @Suppress("DEPRECATION")
                                         mBinding.v.setBackgroundColor(
                                                 it.getVibrantColor(
-                                                        ctx.resources
+                                                        context.resources
                                                                 .getColor(R.color.colorPrimaryDark)
                                                 )
                                         )

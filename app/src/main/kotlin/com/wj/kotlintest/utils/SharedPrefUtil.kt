@@ -74,10 +74,19 @@ object SharedPrefUtil {
     fun getBoolean(key: String, defValue: Boolean) = sharedPref.getBoolean(key, defValue)
 
     /**
+     * 根据 key，从 SharedPref 中移除数据
+     *
+     * @param key 键名
+     */
+    fun remove(key: String) {
+        sharedPref.edit().remove(key).apply()
+    }
+
+    /**
      * 获取 SharedPref 中所有数据集合
      *
      * @return 保存的所有数据集合
      */
-    fun getAll() = sharedPref.all
+    fun getAll(): Map<String, *> = sharedPref.all
 
 }

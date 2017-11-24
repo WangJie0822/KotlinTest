@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
+import android.support.v4.view.ViewPager
+import android.view.Gravity
 import com.wj.kotlintest.R
 import com.wj.kotlintest.adapter.FragVpAdapter
 import com.wj.kotlintest.base.BaseActivity
@@ -13,6 +15,8 @@ import com.wj.kotlintest.constants.APP_EXIT_PRESS_BACK_INTERVAL
 import com.wj.kotlintest.constants.MOVIES_TYPE_HIGHEST_RATE
 import com.wj.kotlintest.constants.MOVIES_TYPE_POPULAR
 import com.wj.kotlintest.databinding.ActivityMainBinding
+import com.wj.kotlintest.databinding.OnFloatingClickListener
+import com.wj.kotlintest.databinding.OnFloatingLongClickListener
 import com.wj.kotlintest.fragment.MoviesListFragment
 import com.wj.kotlintest.utils.AppManager
 
@@ -50,6 +54,21 @@ class MainActivity : BaseActivity<BlankPresenter, ActivityMainBinding>() {
                 .frags(mFrags)
                 .build()
 
+        mBinding.vp.addOnPageChangeListener(object: ViewPager.OnPageChangeListener {
+            override fun onPageScrollStateChanged(state: Int) {
+            }
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+            }
+
+            override fun onPageSelected(position: Int) {
+                setTitleStr(when (position) {
+                    0 -> "高评分电影"
+                    1 -> "最流行电影"
+                    else -> ""
+                })
+            }
+        })
     }
 
     override fun onBackPressed() {
@@ -70,6 +89,30 @@ class MainActivity : BaseActivity<BlankPresenter, ActivityMainBinding>() {
     }
 
     override fun initTitleBar() {
+        showTitleBar()
+        setTitleStr("高评分电影")
+        setToolbarHide()
+    }
+
+    override fun initFloatingButton() {
+        showFloating()
+        setFloatingResID(R.mipmap.favorite_unselected)
+        setFloatingAnchor(R.id.fl_content)
+        setFloatingGravity(Gravity.BOTTOM or Gravity.END)
+        setFloatingClick(object : OnFloatingClickListener {
+            override fun onClick() {
+                val snackbar = Snackbar.make(mBinding.root, "长按可进入喜欢的电影", Snackbar.LENGTH_SHORT)
+                @Suppress("DEPRECATION")
+                snackbar.view.setBackgroundColor(resources.getColor(android.R.color.holo_red_light))
+                snackbar.show()
+            }
+        })
+        setFloatingLongClick(object : OnFloatingLongClickListener {
+            override fun onLongClick() {
+                // 跳转最喜欢的电影列表界面
+                FavoriteActivity.actionStart(mContext)
+            }
+        })
     }
 
 }

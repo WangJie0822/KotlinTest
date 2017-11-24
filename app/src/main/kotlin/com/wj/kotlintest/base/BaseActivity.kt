@@ -6,14 +6,12 @@ import android.graphics.drawable.AnimationDrawable
 import android.os.Build
 import android.os.Bundle
 import android.support.annotation.DrawableRes
+import android.support.annotation.IdRes
 import android.support.annotation.StringRes
 import android.support.v7.app.AppCompatActivity
 import android.view.LayoutInflater
-import android.view.MenuItem
 import com.wj.kotlintest.R
-import com.wj.kotlintest.databinding.LayoutBaseBinding
-import com.wj.kotlintest.databinding.OnBaseClickListener
-import com.wj.kotlintest.databinding.RootHandler
+import com.wj.kotlintest.databinding.*
 import com.wj.kotlintest.utils.AppManager
 import com.wj.kotlintest.utils.StatusBarUtil
 import dagger.android.support.DaggerAppCompatActivity
@@ -84,9 +82,6 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
      */
     override fun setContentView(layoutResID: Int) {
 
-        // 初始化标题栏
-        initTitleBar()
-
         // 加载布局，初始化 DataBinding
         mBinding = DataBindingUtil.inflate(
                 LayoutInflater.from(mContext),
@@ -100,23 +95,24 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
         // 设置布局
         super.setContentView(baseBinding.root)
 
+        // 初始化状态栏
+        initStatusBar()
+
+        // 初始化标题栏
+        initTitleBar()
+
+        // 初始化浮动按钮
+        initFloatingButton()
+    }
+
+    /**
+     *  设置 Toolbar
+     */
+    open protected fun setToolbar() {
         // 添加 Toolbar
         setSupportActionBar(baseBinding.toolbar)
         // 隐藏默认 title
         supportActionBar?.setDisplayShowTitleEnabled(false)
-
-        // 初始化状态栏
-        initStatusBar()
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        item?.let {
-            if (it.itemId == android.R.id.home) {
-                // 左侧按钮点击事件
-                onLeftClick()
-            }
-        }
-        return super.onOptionsItemSelected(item)
     }
 
     /**
@@ -137,12 +133,90 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     }
 
     /**
+     * 初始化浮动按钮
+     */
+    open protected fun initFloatingButton() {}
+
+    /**
+     * 设置显示 Floating 按钮
+     *
+     * @param show 是否显示
+     */
+    open protected fun showFloating(show: Boolean = true) {
+        baseBinding.handler?.showFloating = show
+    }
+
+    /**
+     * 设置 Floating 按钮图片 id
+     *
+     * @param resID 图片资源 id
+     */
+    open protected fun setFloatingResID(@DrawableRes resID: Int) {
+        baseBinding.handler?.floatingResID = resID
+    }
+
+    /**
+     * 设置 Floating 按钮锚点
+     *
+     * @param id 锚点 View id
+     */
+    open protected fun setFloatingAnchor(@IdRes id: Int) {
+        baseBinding.handler?.floatingAnchor = id
+    }
+
+    /**
+     * 设置 Floating 按钮重心
+     *
+     * @param gravity 重心 [android.view.Gravity]
+     */
+    open protected fun setFloatingGravity(gravity: Int) {
+        baseBinding.handler?.floatingGravity = gravity
+    }
+
+    /**
+     * 设置 Floating 按钮选中状态
+     *
+     * @param selected 是否选中
+     */
+    open protected fun setFloatingSelected(selected: Boolean) {
+        baseBinding.handler?.floatingSelected = selected
+    }
+
+    /**
+     * 获取 Floating 按钮选中状态
+     *
+     * @return 选中状态
+     */
+    open protected fun isFloatingSelected() = baseBinding.handler!!.floatingSelected
+
+    /**
+     * 设置 Floating 按钮点击事件监听
+     *
+     * @param listener 事件监听对象
+     */
+    open protected fun setFloatingClick(listener: OnFloatingClickListener) {
+        baseBinding.handler?.floatingClickListener = listener
+    }
+
+    /**
+     * 设置 Floating 按钮长按事件监听
+     *
+     * @param listener 事件监听对象
+     */
+    open protected fun setFloatingLongClick(listener: OnFloatingLongClickListener) {
+        baseBinding.handler?.floatingLongClickListener = listener
+    }
+
+    /**
      * 设置标题栏显示
      *
      * @param showTitle 是否显示
      */
-    protected fun showTitle(showTitle: Boolean = true) {
-        baseBinding.handler?.showTitle = showTitle
+    protected fun showTitleBar(showTitle: Boolean = true) {
+        baseBinding.handler?.showTitleBar = showTitle
+        if (showTitle) {
+            setToolbar()
+        }
     }
 
     /**
@@ -160,8 +234,8 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
      * @param strResID 标题文本资源id
      */
     protected fun setTitleStr(@StringRes strResID: Int) {
-        baseBinding.handler?.showTvTitle = true
-        baseBinding.handler?.tvTitle = getString(strResID)
+        baseBinding.handler?.showTitleStr = true
+        baseBinding.handler?.titleStr = getString(strResID)
     }
 
     /**
@@ -170,8 +244,8 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
      * @param str      标题文本
      */
     protected fun setTitleStr(str: String) {
-        baseBinding.handler?.showTvTitle = true
-        baseBinding.handler?.tvTitle = str
+        baseBinding.handler?.showTitleStr = true
+        baseBinding.handler?.titleStr = str
     }
 
     /**
@@ -179,8 +253,14 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
      *
      * @param resID     标题栏左侧图标资源id，默认返回按钮
      */
-    protected fun setIvLeft(@DrawableRes resID: Int = R.mipmap.arrow_left_white) {
-        baseBinding.toolbar.setNavigationIcon(resID)
+    protected fun setIvLeft(@DrawableRes resID: Int = 0) {
+        if (0 == resID) {
+            // 使用默认图标
+            supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        } else {
+            // 使用指定图标
+            baseBinding.handler?.ivLeftResID = resID
+        }
     }
 
     /**
@@ -274,7 +354,7 @@ abstract class BaseActivity<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     /**
      * 标题栏左侧点击事件，默认结束当前界面
      */
-    open fun onLeftClick() {
+    override fun onLeftClick() {
         finish()
     }
 
