@@ -12,7 +12,6 @@ import com.wj.kotlintest.entity.MoviesEntity
 import com.wj.kotlintest.handler.MoviesListHandler
 import com.wj.kotlintest.mvp.FavoritePresenter
 import com.wj.kotlintest.mvp.FavoriteView
-import com.wj.swipelayout.OnRefreshListener
 import javax.inject.Inject
 
 /**
@@ -53,11 +52,9 @@ class FavoriteActivity
         mBinding.swipeTarget.adapter = adapter
 
         // 设置下拉刷新监听
-        mBinding.swipe.refreshListener = object : OnRefreshListener {
-            override fun onRefresh() {
-                // 初始化数据
-                presenter.getFavoriteList()
-            }
+        mBinding.swipe.setOnRefreshListener {
+            // 初始化数据
+            presenter.getFavoriteList()
         }
 
         // 显示加载中界面

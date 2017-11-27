@@ -2,10 +2,10 @@ package com.wj.kotlintest.base
 
 import android.databinding.ViewDataBinding
 import android.os.Bundle
-import com.wj.swipelayout.SwipeBackActivityBase
-import com.wj.swipelayout.SwipeBackActivityHelper
-import com.wj.swipelayout.SwipeBackLayout
-import com.wj.swipelayout.Utils
+import me.imid.swipebacklayout.lib.SwipeBackLayout
+import me.imid.swipebacklayout.lib.Utils
+import me.imid.swipebacklayout.lib.app.SwipeBackActivityBase
+import me.imid.swipebacklayout.lib.app.SwipeBackActivityHelper
 
 /**
  * Activity 基类，右划返回

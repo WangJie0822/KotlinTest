@@ -15,7 +15,6 @@ import com.wj.kotlintest.entity.MoviesListEntity
 import com.wj.kotlintest.handler.MoviesListHandler
 import com.wj.kotlintest.mvp.MoviesListPresenter
 import com.wj.kotlintest.mvp.MoviesListView
-import com.wj.swipelayout.OnRefreshListener
 import javax.inject.Inject
 
 /**
@@ -62,11 +61,9 @@ class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListB
         mBinding.swipeTarget.adapter = adapter
 
         // 设置下拉刷新监听
-        mBinding.swipe.refreshListener = object : OnRefreshListener {
-            override fun onRefresh() {
-                // 初始化数据
-                initData()
-            }
+        mBinding.swipe.setOnRefreshListener {
+            // 初始化数据
+            initData()
         }
 
         // 显示加载中界面

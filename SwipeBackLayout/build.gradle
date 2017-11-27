@@ -1,0 +1,20 @@
+apply plugin: 'com.android.library'
+
+repositories {
+    mavenCentral()
+}
+
+
+android {
+    compileSdkVersion 26
+    buildToolsVersion "26.0.2"
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 25
+    }
+}
+
+dependencies {
+    implementation 'com.android.support:appcompat-v7:26.1.0'
+}
