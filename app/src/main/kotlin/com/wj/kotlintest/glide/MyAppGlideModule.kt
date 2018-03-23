@@ -16,11 +16,11 @@ import com.bumptech.glide.module.AppGlideModule
 @GlideModule
 class MyAppGlideModule : AppGlideModule(){
 
-    override fun applyOptions(context: Context?, builder: GlideBuilder?) {
-        builder?.setMemoryCache(LruResourceCache(10 * 1024 * 1024))
+    override fun applyOptions(context: Context, builder: GlideBuilder) {
+        builder.setMemoryCache(LruResourceCache(10 * 1024 * 1024))
     }
 
-    override fun registerComponents(context: Context?, glide: Glide?, registry: Registry?) {
+    override fun registerComponents(context: Context, glide: Glide, registry: Registry) {
 //        registry?.replace(GlideUrl::class.java, InputStream::class.java, Okhttp)
     }
 

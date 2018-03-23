@@ -37,7 +37,7 @@ class MoviesListAdapter @Inject constructor()
                     .load(UrlDefinition.POSTER_PATH + entity.backdrop_path)
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into<BitmapImageViewTarget>(object : BitmapImageViewTarget(mBinding.iv) {
-                        override fun onResourceReady(resource: Bitmap?, transition: Transition<in Bitmap>?) {
+                        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                             super.onResourceReady(resource, transition)
                             // 图片加载完成后，从图片中取色，并设置为电影名背景色
                             Palette.from(resource)

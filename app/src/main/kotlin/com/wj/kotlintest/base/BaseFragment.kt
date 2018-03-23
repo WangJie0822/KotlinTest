@@ -53,7 +53,7 @@ abstract class BaseFragment<P : BaseMVPPresenter<*, *>, DB : ViewDataBinding>
     /**
      * 重写 onCreateView() 方法，加载根布局、当前界面布局及相关初始化
      */
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         // 加载根布局，初始化 DataBinding
         baseBinding = DataBindingUtil.inflate(

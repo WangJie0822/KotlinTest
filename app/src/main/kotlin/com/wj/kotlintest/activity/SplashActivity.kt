@@ -23,4 +23,8 @@ class SplashActivity : BaseActivity<BlankPresenter, ActivitySplashBinding>() {
             finish()
         }, SPLASH_TIME_DELAY)
     }
+
+    override fun initStatusBar() {
+//        super.initStatusBar()
+    }
 }

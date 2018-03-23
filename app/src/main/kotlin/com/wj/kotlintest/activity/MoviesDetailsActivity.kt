@@ -142,8 +142,8 @@ class MoviesDetailsActivity
         mBinding.handler?.hasTrailers = true
 
         // 绑定数据、Handler
-        trailersAdapter.data = entity.results
-        trailersAdapter.handler = mBinding.handler
+        trailersAdapter.mData = entity.results
+        trailersAdapter.mHandler = mBinding.handler
 
         // 设置 RecyclerView 为横向，设置适配器
         mBinding.rvTrailers.layoutManager = LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false)
@@ -161,8 +161,8 @@ class MoviesDetailsActivity
         mBinding.handler?.hasReviews = true
 
         // 绑定数据、Handler
-        reviewsAdapter.data = entity.results
-        reviewsAdapter.handler = mBinding.handler
+        reviewsAdapter.mData = entity.results
+        reviewsAdapter.mHandler = mBinding.handler
 
         // 设置 RecyclerView 竖向，设置适配器
         mBinding.rvReviews.layoutManager = LinearLayoutManager(mContext)

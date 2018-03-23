@@ -27,8 +27,8 @@ class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListB
     lateinit var adapter: MoviesListAdapter
 
     /** 标记-电影列表类型 */
-    private val moviesType
-        get() = arguments.getInt(MOVIES_LIST_TYPE)
+    private val moviesType: Int
+        get() = arguments?.getInt(MOVIES_LIST_TYPE) ?: 0
 
     companion object {
         /**
@@ -53,8 +53,8 @@ class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListB
         presenter.attach(this)
 
         // 绑定数据、Handler
-        adapter.data = arrayListOf()
-        adapter.handler = MoviesListActivityHandler()
+        adapter.mData = arrayListOf()
+        adapter.mHandler = MoviesListActivityHandler()
 
         // 设置 RecyclerView 布局管理、适配器
         mBinding.swipeTarget.layoutManager = GridLayoutManager(mContext, 2)
@@ -83,7 +83,7 @@ class MoviesListFragment : BaseFragment<MoviesListPresenter, FragmentMoviesListB
 
     override fun notifyData(data: MoviesListEntity) {
         // 加载完成，更新界面
-        adapter.data.addAll(data.results)
+        adapter.mData.addAll(data.results)
         adapter.notifyDataSetChanged()
     }
 

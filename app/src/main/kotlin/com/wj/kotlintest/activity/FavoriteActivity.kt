@@ -44,8 +44,8 @@ class FavoriteActivity
         presenter.attach(this)
 
         // 绑定数据、Handler
-        adapter.data = arrayListOf()
-        adapter.handler = FavoriteHandler()
+        adapter.mData = arrayListOf()
+        adapter.mHandler = FavoriteHandler()
 
         // 设置 RecyclerView 布局管理、适配器
         mBinding.swipeTarget.layoutManager = GridLayoutManager(mContext, 2)
@@ -80,8 +80,8 @@ class FavoriteActivity
     }
 
     override fun notify(list: ArrayList<MoviesEntity>) {
-        adapter.data.clear()
-        adapter.data.addAll(list)
+        adapter.mData.clear()
+        adapter.mData.addAll(list)
         adapter.notifyDataSetChanged()
     }
 
